@@ -1,51 +1,100 @@
-# Initial stub at an overview for the client/server side VTP demo code
+# Initial Design Thoughts Regarding the Client/Server VTP Demo Code
 
-## Background
+## 1) Background
 
-TBD
+Moving the design notes from [VoteTrackerPlus Discussino](https://github.com/TrustTheVote-Project/VoteTrackerPlus/discussions/51#discussioncomment-4772776) to here.
 
-### Pre-demo steps
-This occurs with the demo laptop connected to the internet and having GitHub access etc
-From within the chosen VTP poetry python environment AND chosen mock demo git repo (and git submodules), run setup-vtp-demo
-setup-vtp-demo can do what it does now (it currently creates 4 scanner repos/workspaces and that is ok for now)
-Initialize the demo on-site - assumes no internet connection
+## 2) Uber Context
 
-this happens at the fair
-start the web server
-test the web server
+A high level description of starting and stopping the demo.  Maybe it works as a starting point for a real polling center, maybe not.
 
-### First API endpoint
+1. Install the VTP software (connected to the internet)
+    - pull data and environment
 
-phone connects to web server and requests a unique connection ID
-returns a unique connection ID
+2. Initialize the polling center/demo hardware (air gapped with the internet):
+    - run a setup-vtp-demo from scratch into a new directory location
+    - start the web server with client connections denied
+    - test the web server
 
-### Second API endpoint
+3. Open the polls
+    - Allow client connections to proceed
 
-given a unique connection ID, phone requests a ballot
-returns a ballot
+4. Close the polls
+    - prohibit new client connections
 
-### Third API endpoint
+5. Shutdown the polls 
+    - shut down all client connections
+    - flush all pending CVR merges
+    - report on client connection statistics
 
-given a unique connection ID, uploads a ballot
-We decided for the moment that the (JS) client side will validate the contest selections and directly support voter self-adjudication of the ballot. The VTP python code currently also supports this. However, the data that the VTP python code returns to the client via endpoint 3 contains the information necessary for the client side (JS) to directly self adjudication. Another solution is to create another endpoint that manages the self adjudication of the ballot so that no JS needs to be written/debugged/tested to support this. In hindsight, I think I now vote for an additional endpoint to use the existing python self adjudication code.
-Question - is it ok for the VTP python code to continue to validate the completed ballot and to throw an exception back to the client side if the completed ballot is non-compliant post JS self-adjudication?
+6. shutdown the polling center
+    - stop the server
+    - log some demo data
 
-### Fourth API endpoint
+7. Upload/aggregate results with other precincts (connected to the internet)
+    - push the election data back up
 
-supports calling the python script verify-ballot-receipt with various switches. Each different python switch would map to a different button
-it is this endpoint which is of high interest regarding the VTP demo. This is the endpoint that basically demonstrates E2EV. As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling VoteTracker+ will be for the voter.
+## Client/Server Endpoint Details
+
+### A. Pre-demo steps (occurs during phase 1 above)
+
+- Effectively covers steps 1, 2, and 3 above
+
+### B. First API endpoint (occurs during phase 3 above)
+
+- Phone connects to web server and requests a unique connection ID
+- Returns a unique connection ID
+
+### C. Second API endpoint (occurs during phase 3 above)
+
+- Given a unique connection ID, phone requests a ballot
+- Returns a ballot
+
+### D. Third API endpoint (occurs during phase 3 above)
+
+Given a unique connection ID, this endpoint will upload a ballot.  During the 2023/02/02 meeting, after a detailed 3-way discussion we decided that the JS client would validate the voter's contest ballot choices for proper ballot compliance.  The demo election data file (EDF), which is native VTP election data, contains the rules that defines a valid selection for each contest.  The NIST standard also defines this but appears (TBD) to not enforce compliance in that NIST allows (TBD) an election definition file to be incorrectly/incompletely defined by election officials.
+
+Though this is not true with native VTP election data, regardless VTP supports an automatic CI pipeline which includes testing.  The goal is that with tests, human error in election data file definitions regarding valid contest selection will be caught prior to an election.
+
+We also decided that the JS client would also support voter self adjudication of all the contests.  Self adjudication occurs when the voter has a chance to validate their contest selections prior to officially submitting their ballot.  Therefor, the JS client at a high level workflow would look like the following:
+
+- Loop over each contest and:
+    - present the contest to the voter
+    - the voter makes their selection
+    - JS verifies that the selection is EDF compliant
+- Present to the user the effective selection summary of the ballot sans ballot verbiage.  This is effectively a pretty print of the ballot CVR via an aggregation of each contest CVR.
+- Require the voter to accept the selection summary
+- If yes, JS will call the third API endpoint
+- If no, JS will either restart the loop or jump to a specific contest for a new voter selection
+
+Note that the python server side will re-validate the incoming ballot CVR.  The entrypoint can return various errors to the client:
+
+- a non compliant contest selection was found
+- there was a problem on the server side
+
+If there is no error, this endpoint returns:
+
+- the voter's ballot check
+- the voter's row offset into the ballot check
+
+### E. Fourth API endpoint (occurs during phase 3 above)
+
+- Given an connection ID, will invoke verify-ballot-receipt on the server side backend
+- Supports various switches, each switch being a different UX button
+
+Supports calling the python script verify-ballot-receipt with various switches. Each different python switch would map to a different button.  It is this endpoint which is of high interest regarding the VTP demo as this endpoint basically demonstrates E2EV.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling VoteTracker+ will be for the voter.
 also requires a connection ID
 
-### Fifth API endpoint
+### F. Fifth API endpoint (occurs during phase 3 above)
 
-supports calling the python script tally-contests with various switches. Each different python switch might map to a different button
-it is this endpoint which is of high interest to the RCV folks as it is this one where the voter can see how their ranked voted is counted across the rounds of rank choice voting. As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling RCV should be for the voter.
-Other action items and decisions/observations:
+- Given an connection ID, will invoke tally-contests on the server side backend
+- Supports various switches, each switch being a different UX button
 
-Rename the 'local-remote' git repo in all documentation to the 'tabulation' repo - the name local-remote is confusing.
+Supports calling the python script tally-contests with various switches.  Each different python switch might map to a different button.  It is this endpoint which is of high interest to the RCV folks as it is this one where the voter can see how their ranked voted is counted across the rounds of rank choice voting.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling RCV should be for the voter.
 
-Maybe finesse two different names for the current VTP scanner app repos/workspaces to either scanner repos/workspaces when talking about voting center VTP deployments and client repos/workspaces when talking about the RCV/VTP demo.
+## Other Odds and Ends
 
-We decided to allow participants in the demo to vote as many times as they would like so to gain experience with RCV and VTP and to allow multiple people to use one phone. This might be a bad decision - in retro spec it seems like it. I think we want as few things as possible to confuse the voter (even though in real life they will not be voting by phone). However, to prevent multiple votes the solution would need to work across multiple browsers - it may be too much work for the demo.
+1. We decided to allow participants in the demo to vote as many times as they would like so to gain experience with RCV and VTP and to allow multiple people to use one phone.  This might be a bad decision - in retro spec it seems like it.  It may be that we want to minimize the number of things that can confuse the voter (even though in real life they will not be voting by phone).  Regardless, to prevent multiple votes the solution would need to work across multiple browsers.
 
-The presenter needs to make certain that people understand that in a real election, the voter's secret number (the row offset) will not be observable by any other person, election official or voter, except in the existing case of accessibility needs where someone else may already have access to the selections depending on the specific election infrastructure.
+2. The presenter needs to make certain that people understand that in a real election, the voter's secret number (the row offset) will not be observable by any other person, election official or voter, except in the existing case of accessibility needs where someone else may already have access to the selections depending on the specific election infrastructure.
+
