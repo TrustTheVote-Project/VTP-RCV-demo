@@ -10,8 +10,10 @@ A high level description of starting and stopping the demo.  Maybe it works as a
 
 1. Install the VTP software (connected to the internet)
     - pull data and environment
+    - this happens at home at not necessarily at the demo location
 
 2. Initialize the polling center/demo hardware (air gapped with the internet):
+    - power on the devices (laptop and firewall/router/AP)
     - run a setup-vtp-demo from scratch into a new directory location
     - start the web server with client connections denied
     - test the web server
@@ -39,6 +41,7 @@ A high level description of starting and stopping the demo.  Maybe it works as a
 ### A. Pre-demo steps (occurs during phase 1 above)
 
 - Effectively covers steps 1, 2, and 3 above
+- We may want a _test_ endpoint that returns server status - TBD
 
 ### B. First API endpoint (occurs during phase 3 above)
 
@@ -52,18 +55,18 @@ A high level description of starting and stopping the demo.  Maybe it works as a
 
 ### D. Third API endpoint (occurs during phase 3 above)
 
-Given a unique connection ID, this endpoint will upload a ballot.  During the 2023/02/02 meeting, after a detailed 3-way discussion we decided that the JS client would validate the voter's contest ballot choices for proper ballot compliance.  The demo election data file (EDF), which is native VTP election data, contains the rules that defines a valid selection for each contest.  The NIST standard also defines this but appears (TBD) to not enforce compliance in that NIST allows (TBD) an election definition file to be incorrectly/incompletely defined by election officials.
+Given a unique connection ID, this endpoint will upload a ballot.  During the 2023/02/02 meeting, after a detailed 3-way discussion we decided that the JS client would validate the voter's contest ballot choices for proper ballot compliance.  The demo election data file (EDF), which is native VTP election data 'file' so-to-speak, contains the rules that defines a valid selection for each contest.  The NIST standard also defines this but appears (TBD) to not enforce compliance in that NIST allows an election definition file to be incorrectly/incompletely defined by election officials.
 
-Though this is not true with native VTP election data, regardless VTP supports an automatic CI pipeline which includes testing.  The goal is that with tests, human error in election data file definitions regarding valid contest selection will be caught prior to an election.
+Though this is not true with native VTP election data files, regardless VTP supports an automatic CI pipeline which includes testing.  The goal is that with tests, human error in election data file definitions regarding valid contest selection will be caught prior to an election.
 
-We also decided that the JS client would also support voter self adjudication of all the contests.  Self adjudication occurs when the voter has a chance to validate their contest selections prior to officially submitting their ballot.  Therefor, the JS client at a high level workflow would look like the following:
+We also decided that the JS client would also support voter self adjudication of all the contests.  Self adjudication occurs when the voter has a chance to validate their contest selections prior to officially submitting their ballot.  Therefor, the JS client at a high level workflow would look like the following after receiving the blank ballot from the server:
 
 - Loop over each contest and:
     - present the contest to the voter
     - the voter makes their selection
-    - JS verifies that the selection is EDF compliant
-- Present to the user the effective selection summary of the ballot sans ballot verbiage.  This is effectively a pretty print of the ballot CVR via an aggregation of each contest CVR.
-- Require the voter to accept the selection summary
+    - JS verifies that the selection is VTP EDF compliant
+- Present to the user a final selection summary of the ballot sans ballot verbiage.  This is effectively a pretty print of the ballot CVR via an aggregation of each contest CVR.
+- Require the voter to accept or reject the selection summary
 - If yes, JS will call the third API endpoint
 - If no, JS will either restart the loop or jump to a specific contest for a new voter selection
 
@@ -82,7 +85,7 @@ If there is no error, this endpoint returns:
 - Given an connection ID, will invoke verify-ballot-receipt on the server side backend
 - Supports various switches, each switch being a different UX button
 
-Supports calling the python script verify-ballot-receipt with various switches. Each different python switch would map to a different button.  It is this endpoint which is of high interest regarding the VTP demo as this endpoint basically demonstrates E2EV.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling VoteTracker+ will be for the voter.
+Supports calling the backend python script verify-ballot-receipt with various switches. Each different python switch would map (TBD) to a different button.  It is this endpoint which is of high interest regarding the VTP demo as this endpoint basically demonstrates E2EV.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling VoteTracker+ will be for the voter.
 also requires a connection ID
 
 ### F. Fifth API endpoint (occurs during phase 3 above)
@@ -90,7 +93,7 @@ also requires a connection ID
 - Given an connection ID, will invoke tally-contests on the server side backend
 - Supports various switches, each switch being a different UX button
 
-Supports calling the python script tally-contests with various switches.  Each different python switch might map to a different button.  It is this endpoint which is of high interest to the RCV folks as it is this one where the voter can see how their ranked voted is counted across the rounds of rank choice voting.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling RCV should be for the voter.
+Supports calling the backend python script tally-contests with various switches.  Each different python switch would map (TBD) to a different button.  It is this endpoint which is of high interest to the RCV folks as it is this one where the voter can see how their ranked voted is counted across the rounds of rank choice voting.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling RCV should be for the voter.
 
 ## Other Odds and Ends
 
