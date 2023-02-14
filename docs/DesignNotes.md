@@ -36,7 +36,9 @@ A high level description of starting and stopping the demo.  Maybe it works as a
 7. Upload/aggregate results with other precincts (connected to the internet)
     - push the election data back up
 
-## Client/Server Endpoint Details
+## 3) Client/Server Endpoint Details
+
+This part is considered the demo's _design targat_ and not a project plan.  The actual project plan is used to create the [kanban board](https://github.com/orgs/TrustTheVote-Project/projects/5).  See that web page for the action plan.
 
 ### A. Pre-demo steps (occurs during phase 1 above)
 
@@ -45,16 +47,16 @@ A high level description of starting and stopping the demo.  Maybe it works as a
 
 ### B. First API endpoint (occurs during phase 3 above)
 
-- Phone connects to the VTP demo web server, and the web server requests a ballot-store GUID from VoteTrackerPlus
-- VTP backend generates the ballot-store and its GUID and if successful passes it back
+- Phone connects to the VTP demo web server, and the web server requests a ballot-store GUID from VoteTracker+
+- VTP backend generates the ballot-store and its GUID and if successful returns the GUID to the web server
 - web server returns the ballot-store GUID to the client
 
 ### C. Second API endpoint (occurs during phase 3 above)
 
-- Given a GUID, phone requests a ballot from web server
-- web server requests a ballot from VoteTrackerPlus
-- VoteTrackerPlus returns a ballot
-- web server returns a ballot
+- Given a GUID, phone requests a blank ballot from web server
+- web server requests a ballot from VoteTracker+
+- VoteTracker+ returns a blank ballot or raises an error
+- web server returns a blank ballot
 
 ### D. Third API endpoint (occurs during phase 3 above)
 
@@ -98,7 +100,7 @@ also requires a connection ID
 
 Supports calling the backend python script tally-contests with various switches.  Each different python switch would map (TBD) to a different button.  It is this endpoint which is of high interest to the RCV folks as it is this one where the voter can see how their ranked voted is counted across the rounds of rank choice voting.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling RCV should be for the voter.
 
-## Other Odds and Ends
+## 4) Other Odds and Ends
 
 1. We decided to allow participants in the demo to vote as many times as they would like so to gain experience with RCV and VTP and to allow multiple people to use one phone.  This might be a bad decision - in retro spec it seems like it.  It may be that we want to minimize the number of things that can confuse the voter (even though in real life they will not be voting by phone).  Regardless, to prevent multiple votes the solution would need to work across multiple browsers.
 
