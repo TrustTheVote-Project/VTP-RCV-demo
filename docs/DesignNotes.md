@@ -45,13 +45,16 @@ A high level description of starting and stopping the demo.  Maybe it works as a
 
 ### B. First API endpoint (occurs during phase 3 above)
 
-- Phone connects to web server and requests a unique connection ID
-- Returns a unique connection ID
+- Phone connects to the VTP demo web server, and the web server requests a ballot-store GUID from VoteTrackerPlus
+- VTP backend generates the ballot-store and its GUID and if successful passes it back
+- web server returns the ballot-store GUID to the client
 
 ### C. Second API endpoint (occurs during phase 3 above)
 
-- Given a unique connection ID, phone requests a ballot
-- Returns a ballot
+- Given a GUID, phone requests a ballot from web server
+- web server requests a ballot from VoteTrackerPlus
+- VoteTrackerPlus returns a ballot
+- web server returns a ballot
 
 ### D. Third API endpoint (occurs during phase 3 above)
 
