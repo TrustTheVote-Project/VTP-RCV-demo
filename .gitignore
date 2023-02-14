@@ -12,6 +12,4 @@ __pycache__
 .pytest_cache
 
 # Ignore python local install build symlinks et al
-pyproject.toml
-poetry.lock
 .venv
