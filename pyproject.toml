@@ -11,6 +11,7 @@ packages = [{include = "vtp_rcv_demo"}]
 python = "^3.11"
 requests = "^2.28.2"
 fastapi = "^0.92.0"
+uvicorn = "^0.20.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
