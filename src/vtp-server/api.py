@@ -11,6 +11,7 @@ async def root() -> dict:
 
 
 @app.get("/vote/")
-def get_vote_store_id() -> dict:
+async def get_vote_store_id() -> dict:
+    """Get a unique Vote Store ID for each client"""
     vote_store_id = str(random.randrange(100000, 999999))
     return {"VoteStoreID": vote_store_id}
