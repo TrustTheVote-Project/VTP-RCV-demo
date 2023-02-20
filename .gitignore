@@ -13,3 +13,4 @@ __pycache__
 
 # Ignore python local install build symlinks et al
 .venv
+.tool-versions

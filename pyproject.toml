@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "vtp-rcv-demo"
+name = "vtp-spring-demo"
 version = "0.1.0"
 description = "Web server to demonstrate the use of VTP+ for RCV elections"
 authors = ["Neil Johnson <neil@cadent.com>"]
 license = "GNU General Public License v2.0"
 readme = "README.md"
-packages = [{include = "vtp_rcv_demo"}]
+packages = [{include = "vtp_server", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -20,6 +20,7 @@ flake8 = "^6.0.0"
 mypy = "^1.0.0"
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
+pylint = "^2.16.2"
 
 [build-system]
 requires = ["poetry-core"]
