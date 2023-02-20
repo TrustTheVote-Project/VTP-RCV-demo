@@ -1,17 +1,18 @@
 [tool.poetry]
-name = "vtp-spring-demo"
+name = "vtpserver"
 version = "0.1.0"
-description = "Web server to demonstrate the use of VTP+ for RCV elections"
+description = "A Python API server to demonstrate the use of VoteTrackerPlus for a mock election"
 authors = ["Neil Johnson <neil@cadent.com>"]
 license = "GNU General Public License v2.0"
 readme = "README.md"
-packages = [{include = "vtp_server", from = "src"}]
+packages = [{include = "vtpserver", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.28.2"
 fastapi = "^0.92.0"
 uvicorn = "^0.20.0"
+httpx = "^0.23.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

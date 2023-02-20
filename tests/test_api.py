@@ -1,6 +1,11 @@
-import requests
+from fastapi.testclient import TestClient
 
-# run `uvicorn api:app` first!
+from vtpserver.api import app
 
-print(requests.get("http://127.0.0.1:8000/").json())
-print(requests.get("http://127.0.0.1:8000/vote").json())
+client = TestClient(app)
+
+
+def test_read_main():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"message": "Hello World"}
