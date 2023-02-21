@@ -4,6 +4,9 @@
 \#*\#
 TAGS
 
+# Vim
+*.swp
+
 # Mac
 .DS_Store
 

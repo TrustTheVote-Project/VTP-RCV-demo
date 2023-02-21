@@ -1,27 +1,26 @@
 [tool.poetry]
-name = "vtpserver"
+name = "vtpwebapi"
 version = "0.1.0"
-description = "A Python API server to demonstrate the use of VoteTrackerPlus for a mock election"
+description = "A Python API web server to demonstrate the use of VoteTrackerPlus for a mock election"
 authors = ["Neil Johnson <neil@cadent.com>"]
 license = "GNU General Public License v2.0"
 readme = "README.md"
-packages = [{include = "vtpserver", from = "src"}]
+packages = [{include = "api", from = "src/vtp/web"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-requests = "^2.28.2"
+python = "^3.9"
 fastapi = "^0.92.0"
-uvicorn = "^0.20.0"
 httpx = "^0.23.3"
+uvicorn = "^0.20.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
-isort = "^5.12.0"
 flake8 = "^6.0.0"
+isort = "^5.12.0"
 mypy = "^1.0.0"
+pylint = "^2.16.2"
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
-pylint = "^2.16.2"
 
 [build-system]
 requires = ["poetry-core"]

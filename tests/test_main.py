@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from vtpserver.api import app
+from vtp.web.api.main import app
 
 client = TestClient(app)
 
