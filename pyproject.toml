@@ -5,7 +5,7 @@ description = "A Python API web server to demonstrate the use of VoteTrackerPlus
 authors = ["Neil Johnson <neil@cadent.com>"]
 license = "GNU General Public License v2.0"
 readme = "README.md"
-packages = [{include = "api", from = "src/vtp/web"}]
+packages = [{include = "vtp", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
