@@ -4,16 +4,30 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+# create a list to store VoteStoreIDs
+vote_store_ids = []
+empty_ballot = "Empty Ballot"
+
 
 @app.get("/")
 async def root() -> dict:
-    """Test that API is working"""
+    """Demonstrate that API is working"""
     return {"message": "Hello World"}
 
 
 @app.get("/vote/")
 async def get_vote_store_id() -> dict:
-    """Get a unique Vote Store ID for each client"""
+    """Create and store a unique Vote Store ID for each client"""
     vote_store_id = str(random.randrange(100000, 999999))
+    # add VoteStoreID to list
+    vote_store_ids.append(vote_store_id)
     return {"VoteStoreID": vote_store_id}
 
+
+@app.get("/vote/{vote_store_id}")
+async def get_empty_ballot(vote_store_id: str) -> dict:
+    """Return an empty ballot for a given Vote Store ID"""
+    if vote_store_id in vote_store_ids:
+        return {"ballot": f"{empty_ballot}"}
+    else:
+        return {"error": "VoteStoreID not found"}
