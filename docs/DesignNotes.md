@@ -102,7 +102,7 @@ Supports calling the backend python script tally-contests with various switches.
 
 ## Other Odds and Ends
 
-1. We decided to allow participants in the demo to vote as many times as they would like so to gain experience with RCV and VTP and to allow multiple people to use one phone.  This might be a bad decision - in retrospec it seems like it.  It may be that we want to minimize the number of things that can confuse the voter (even though in real life they will not be voting by phone).  Regardless, to prevent multiple votes the solution would need to work across multiple browsers.
+1. We decided to allow participants in the demo to vote as many times as they would like so to gain experience with RCV and VTP and to allow multiple people to use one phone.
 
 2. The presenter needs to make certain that people understand that in a real election, the voter's secret number (the row offset) will not be observable by any other person, election official or voter, except in the existing case of accessibility needs where someone else may already have access to the selections depending on the specific election infrastructure.
 
