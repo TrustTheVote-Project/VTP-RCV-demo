@@ -3,7 +3,7 @@
 classDiagram
   Blank_Contest *-- Choice
   Ballot *-- Blank_Contest
-  Ballot *-- Cast_Contest
+  Blank_Contest *-- Cast_Contest
   Cast_Contest *-- Selection
 
   class Address {
