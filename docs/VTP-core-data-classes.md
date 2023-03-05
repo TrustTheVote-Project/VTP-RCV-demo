@@ -42,9 +42,10 @@ classDiagram
   }
 
   class Ballot_check {
-    +String number_of_ballots
-    +String number_of_contests
+    +2D_Array contests,ballots
     +List digests
+    -Or-
+    +List QRcode
   }
 
   class Voter_Index {
