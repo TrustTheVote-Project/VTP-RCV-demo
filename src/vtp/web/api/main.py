@@ -1,3 +1,4 @@
+import json
 import random
 
 from fastapi import FastAPI
@@ -6,7 +7,8 @@ app = FastAPI()
 
 # create a list to store VoteStoreIDs
 vote_store_ids = []
-empty_ballot = "Empty Ballot"
+# read empty ballot from JSON file
+empty_ballot = json.load(open("alameda_ca.json"))
 
 
 @app.get("/")
