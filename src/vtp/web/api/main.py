@@ -3,13 +3,17 @@ import json
 import random
 
 from fastapi import FastAPI
+from importlib_resources import files
+
+import vtp.web.api.data
 
 app = FastAPI()
 
 # create a list to store VoteStoreIDs
 vote_store_ids = []
 # read empty ballot from JSON file
-empty_ballot = json.load(open("alameda_ca.json"))
+ballot_data = files(vtp.web.api.data).joinpath("alameda_ca.json").read_text()
+empty_ballot = json.loads(ballot_data)
 
 
 @app.get("/")
