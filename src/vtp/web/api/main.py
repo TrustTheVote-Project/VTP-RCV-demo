@@ -1,3 +1,4 @@
+"""API endpoints for the VoteTrackerPlus backend"""
 import json
 import random
 
@@ -14,7 +15,7 @@ empty_ballot = json.load(open("alameda_ca.json"))
 @app.get("/")
 async def root() -> dict:
     """Demonstrate that API is working"""
-    return {"message": "Hello World"}
+    return {"version": "0.1.0"}
 
 
 @app.get("/vote/")
