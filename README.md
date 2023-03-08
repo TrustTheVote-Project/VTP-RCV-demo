@@ -44,7 +44,7 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 
 To test the API endpoints using the uvicorn server, go to the URL specified in your favorite browser. You'll see the version information for this API server.
 
-Note that you can specify the IP address and port number you want the uvicorn server to use, but we're going to use the defaults here (<http://127.0.0.1:8000>).o
+Note that you can specify the IP address and port number you want the uvicorn server to use, but we're going to use the defaults here (<http://127.0.0.1:8000>).
 
 If you want to update the code that controls the API endpoints, and see the changes on the uvicorn server as soon as you save your code, add the `--reload` switch, like this:
 
