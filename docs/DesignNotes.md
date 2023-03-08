@@ -1,10 +1,10 @@
 # Initial Design Thoughts Regarding the Client/Server VTP Demo Code
 
-## 1) Background
+## Background
 
 Moving the design notes from [VoteTrackerPlus Discussino](https://github.com/TrustTheVote-Project/VoteTrackerPlus/discussions/51#discussioncomment-4772776) to here.
 
-## 2) Uber Context
+## Uber Context
 
 A high level description of starting and stopping the demo.  Maybe it works as a starting point for a real polling center, maybe not.
 
@@ -38,22 +38,27 @@ A high level description of starting and stopping the demo.  Maybe it works as a
 
 ## Client/Server Endpoint Details
 
-### A. Pre-demo steps (occurs during phase 1 above)
+This part is considered the demo's _design targat_ and not a project plan.  The actual project plan is used to create the [kanban board](https://github.com/orgs/TrustTheVote-Project/projects/5).  See that web page for the action plan.
+
+### Pre-demo steps (occurs during phase 1 above)
 
 - Effectively covers steps 1, 2, and 3 above
 - We may want a _test_ endpoint that returns server status - TBD
 
-### B. First API endpoint (occurs during phase 3 above)
+### First API endpoint (occurs during phase 3 above)
 
-- Phone connects to web server and requests a unique connection ID
-- Returns a unique connection ID
+- Phone connects to the VTP demo web server, and the web server requests a ballot-store GUID from VoteTracker+
+- VTP backend generates the ballot-store and its GUID and if successful returns the GUID to the web server
+- web server returns the ballot-store GUID to the client
 
-### C. Second API endpoint (occurs during phase 3 above)
+### Second API endpoint (occurs during phase 3 above)
 
-- Given a unique connection ID, phone requests a ballot
-- Returns a ballot
+- Given a GUID, phone requests a blank ballot from web server
+- web server requests a ballot from VoteTracker+
+- VoteTracker+ returns a blank ballot or raises an error
+- web server returns a blank ballot
 
-### D. Third API endpoint (occurs during phase 3 above)
+### Third API endpoint (occurs during phase 3 above)
 
 Given a unique connection ID, this endpoint will upload a ballot.  During the 2023/02/02 meeting, after a detailed 3-way discussion we decided that the JS client would validate the voter's contest ballot choices for proper ballot compliance.  The demo election data file (EDF), which is native VTP election data 'file' so-to-speak, contains the rules that defines a valid selection for each contest.  The NIST standard also defines this but appears (TBD) to not enforce compliance in that NIST allows an election definition file to be incorrectly/incompletely defined by election officials.
 
@@ -80,7 +85,7 @@ If there is no error, this endpoint returns:
 - the voter's ballot check
 - the voter's row offset into the ballot check
 
-### E. Fourth API endpoint (occurs during phase 3 above)
+### Fourth API endpoint (occurs during phase 3 above)
 
 - Given an connection ID, will invoke verify-ballot-receipt on the server side backend
 - Supports various switches, each switch being a different UX button
@@ -88,7 +93,7 @@ If there is no error, this endpoint returns:
 Supports calling the backend python script verify-ballot-receipt with various switches. Each different python switch would map (TBD) to a different button.  It is this endpoint which is of high interest regarding the VTP demo as this endpoint basically demonstrates E2EV.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling VoteTracker+ will be for the voter.
 also requires a connection ID
 
-### F. Fifth API endpoint (occurs during phase 3 above)
+### Fifth API endpoint (occurs during phase 3 above)
 
 - Given an connection ID, will invoke tally-contests on the server side backend
 - Supports various switches, each switch being a different UX button
@@ -97,7 +102,7 @@ Supports calling the backend python script tally-contests with various switches.
 
 ## Other Odds and Ends
 
-1. We decided to allow participants in the demo to vote as many times as they would like so to gain experience with RCV and VTP and to allow multiple people to use one phone.  This might be a bad decision - in retro spec it seems like it.  It may be that we want to minimize the number of things that can confuse the voter (even though in real life they will not be voting by phone).  Regardless, to prevent multiple votes the solution would need to work across multiple browsers.
+1. We decided to allow participants in the demo to vote as many times as they would like so to gain experience with RCV and VTP and to allow multiple people to use one phone.
 
 2. The presenter needs to make certain that people understand that in a real election, the voter's secret number (the row offset) will not be observable by any other person, election official or voter, except in the existing case of accessibility needs where someone else may already have access to the selections depending on the specific election infrastructure.
 
