@@ -30,7 +30,7 @@ This project requires Python 3.9 or later.
 ## Run the API server
 
 1. Once the installation is complete, go to the source code directory: `cd src/vtp/web/api`
-2. Run the `uvicorn` server like this: `uvicorn main:api`
+2. Run the `uvicorn` server like this: `uvicorn main:app`
 
 If the poetry shell is active (see **Installation** above for details), you should see some output that looks like this:
 
@@ -44,7 +44,13 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 
 To test the API endpoints using the uvicorn server, go to the URL specified in your favorite browser. You'll see the version information for this API server.
 
-Note that you can specify the IP address and port number you want the uvicorn server to use, but we're going to use the defaults here (<http://127.0.0.1:8000>).
+Note that you can specify the IP address and port number you want the uvicorn server to use, but we're going to use the defaults here (<http://127.0.0.1:8000>).o
+
+If you want to update the code that controls the API endpoints, and see the changes on the uvicorn server as soon as you save your code, add the `--reload` switch, like this:
+
+```bash
+uvicorn main:app --reload
+```
 
 ## Testing the API endpoints in your browser
 
