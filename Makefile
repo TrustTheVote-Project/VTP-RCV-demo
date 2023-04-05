@@ -1,0 +1,57 @@
+# Ancient Makefile implicit rule disabler
+(%): %
+%:: %,v
+%:: RCS/%,v
+%:: s.%
+%:: SCCS/s.%
+%.out: %
+%.c: %.w %.ch
+%.tex: %.w %.ch
+%.mk:
+
+# Variables
+DOC_DIR     := docs
+SRC_DIR     := src/vtp/web/api
+TEST_DIR    := tests
+
+INTERACTIVE := $(shell test -t 0 && echo 1)
+ifdef INTERACTIVE
+    RED	:= \033[0;31m
+    END	:= \033[0m
+else
+    RED	:=
+    END	:=
+endif
+
+# Let there be no default target
+.PHONY: default
+default:
+	@echo "${RED}There is no default make target.${END}  Specify one of:"
+	@echo "pylint                  - runs pylint"
+	@echo "pytest                  - runs pytest"
+	@echo "etags                   - constructs an emacs tags table"
+	@echo ""
+	@echo "See ${BUILD_DIR}/README.md for more details and info"
+
+# Run pylint
+.PHONY: pylint
+pylint: requirements.txt
+	@echo "${RED}NOTE - isort and black disagree on 3 files${END} - let black win"
+	isort ${SRC_DIR} ${TEST_DIR}
+	black ${SRC_DIR} ${TEST_DIR}
+	pylint --recursive y ${SRC_DIR} ${TEST_DIR}
+
+# Run tests
+.PHONY: pytest
+pytest:
+	pytest ${TEST_DIR}
+
+# emacs tags
+ETAG_SRCS := $(shell find * -type f -name '*.py' -o -name '*.md' | grep -v defunct)
+.PHONY: etags
+etags: ${ETAG_SRCS}
+	etags ${ETAG_SRCS}
+
+# Generate a requirements.txt for dependabot (ignoring the symlinks)
+requirements.txt: pyproject.toml poetry.lock
+	poetry export --with dev -f requirements.txt --output requirements.txt

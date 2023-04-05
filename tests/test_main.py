@@ -1,3 +1,5 @@
+"""Tests for API endpoints for the VoteTrackerPlus backend"""
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -7,6 +9,7 @@ client = TestClient(app)
 
 
 def test_get_root():
+    """test the root test node"""
     response = client.get("/")
     assert response.status_code == 200
     assert "version" in response.json()
@@ -14,6 +17,7 @@ def test_get_root():
 
 @pytest.fixture
 def test_get_vote_store_id():
+    """Test retreiving and printing a voter store id guid"""
     response = client.get("/vote/")
     assert response.status_code == 200
     assert "VoteStoreID" in response.json()
@@ -22,7 +26,7 @@ def test_get_vote_store_id():
 
 
 def test_get_empty_ballot(test_get_vote_store_id):
-    # test with invalid VoteStoreID
+    """test with invalid VoteStoreID"""
     response = client.get("/vote/00000X")
     assert response.status_code == 200
     assert "error" in response.json()

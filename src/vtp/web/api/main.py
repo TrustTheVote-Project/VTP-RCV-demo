@@ -1,19 +1,30 @@
 """API endpoints for the VoteTrackerPlus backend"""
-import json
-import random
 
 from fastapi import FastAPI
-from importlib_resources import files
 
-import vtp.web.api.data
+from vtp.ops.accept_ballot_operation import AcceptBallotOperation
+from vtp.ops.cast_ballot_operation import CastBallotOperation
+from vtp.ops.setup_vtp_demo_operation import SetupVtpDemoOperation
 
 app = FastAPI()
 
-# create a list to store VoteStoreIDs
+########
+# backend demo constants
+########
+# where the ElectionData repo is
+DEFAULT_ELECTION_DATA_DIR = (
+    "/opt/VoteTrackerPlus/demo.01/mock-clients/scanner.00/VTP-mock-election.US.13"
+)
+# pylint: disable=line-too-long
+DEFAULT_BLANK_BALLOT = "GGOs/states/Massachusetts/GGOs/towns/Concord/blank-ballots/json/000,001,002,003,ballot.json"
+# two more
+VERBOSITY = 3
+
+########
+# local variables
+########
+# A dict to store VoteStoreIDs
 vote_store_ids = []
-# read empty ballot from JSON file
-ballot_data = files(vtp.web.api.data).joinpath("alameda_ca.json").read_text()
-empty_ballot = json.loads(ballot_data)
 
 
 @app.get("/")
@@ -22,19 +33,61 @@ async def root() -> dict:
     return {"version": "0.1.0"}
 
 
+# Endpoint #1
 @app.get("/vote/")
 async def get_vote_store_id() -> dict:
     """Create and store a unique Vote Store ID for each client"""
-    vote_store_id = str(random.randrange(100000, 999999))
+
+    svdo = SetupVtpDemoOperation(
+        DEFAULT_ELECTION_DATA_DIR,
+        VERBOSITY,
+    )
+    guid = svdo.run(
+        guid_client_store=True,
+    )
+
+    vote_store_id = guid
     # add VoteStoreID to list
     vote_store_ids.append(vote_store_id)
     return {"VoteStoreID": vote_store_id}
 
 
+# Endpoint #2
 @app.get("/vote/{vote_store_id}")
 async def get_empty_ballot(vote_store_id: str) -> dict:
     """Return an empty ballot for a given Vote Store ID"""
+
     if vote_store_id in vote_store_ids:
+        # Cet a (the) blank ballot from the backend
+        cbo = CastBallotOperation(
+            guid=vote_store_id,
+            verbosity=VERBOSITY,
+        )
+        empty_ballot = cbo.run(
+            blank_ballot=DEFAULT_BLANK_BALLOT,
+            return_bb=True,
+        )
         return {"ballot": f"{empty_ballot}"}
-    else:
-        return {"error": "VoteStoreID not found"}
+    return {"error": "VoteStoreID not found"}
+
+
+# Endpoint #3
+@app.get("/vote/cast-ballot/{vote_store_id}")
+async def cast_ballot(vote_store_id: str) -> dict:
+    """
+    Uploads the ballot; the backend accepts it, merges it, and returns
+    the ballot check and voter index
+    """
+
+    if vote_store_id in vote_store_ids:
+        # Accept the incoming cast ballot json and return a ballot check and voter index
+        abo = AcceptBallotOperation(
+            guid=vote_store_id,
+            verbosity=VERBOSITY,
+        )
+        ballot_check, voter_index = abo.run(
+            cast_ballot_json="SOMETHING",
+            merge_contests=True,
+        )
+        return {"ballot_check": ballot_check, "voter_index": voter_index}
+    return {"error": "VoteStoreID not found"}
