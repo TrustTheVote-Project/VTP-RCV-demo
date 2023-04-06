@@ -1,7 +1,9 @@
 """API endpoints for the VoteTrackerPlus backend"""
 
-from fastapi import FastAPI
+# import json
+import os
 
+from fastapi import FastAPI
 from vtp.ops.accept_ballot_operation import AcceptBallotOperation
 from vtp.ops.cast_ballot_operation import CastBallotOperation
 from vtp.ops.setup_vtp_demo_operation import SetupVtpDemoOperation
@@ -17,7 +19,13 @@ DEFAULT_ELECTION_DATA_DIR = (
 )
 # pylint: disable=line-too-long
 DEFAULT_BLANK_BALLOT = "GGOs/states/Massachusetts/GGOs/towns/Concord/blank-ballots/json/000,001,002,003,ballot.json"
-# two more
+# for testing only
+DEFAULT_CAST_BALLOT = os.path.join(
+    DEFAULT_ELECTION_DATA_DIR,
+    "receipts",
+    "cast-ballot.json",
+)
+# backend verbosity
 VERBOSITY = 3
 
 ########
@@ -39,8 +47,8 @@ async def get_vote_store_id() -> dict:
     """Create and store a unique Vote Store ID for each client"""
 
     svdo = SetupVtpDemoOperation(
-        DEFAULT_ELECTION_DATA_DIR,
-        VERBOSITY,
+        election_data_dir=DEFAULT_ELECTION_DATA_DIR,
+        verbosity=VERBOSITY,
     )
     guid = svdo.run(
         guid_client_store=True,
@@ -67,13 +75,13 @@ async def get_empty_ballot(vote_store_id: str) -> dict:
             blank_ballot=DEFAULT_BLANK_BALLOT,
             return_bb=True,
         )
-        return {"ballot": f"{empty_ballot}"}
+        return {"blank-ballot": empty_ballot}
     return {"error": "VoteStoreID not found"}
 
 
 # Endpoint #3
 @app.get("/vote/cast-ballot/{vote_store_id}")
-async def cast_ballot(vote_store_id: str) -> dict:
+async def cast_ballot(vote_store_id: str, cast_ballot_json: dict = None) -> dict:
     """
     Uploads the ballot; the backend accepts it, merges it, and returns
     the ballot check and voter index
@@ -85,8 +93,10 @@ async def cast_ballot(vote_store_id: str) -> dict:
             guid=vote_store_id,
             verbosity=VERBOSITY,
         )
+        # ZZZ stub out cast ballot
         ballot_check, voter_index = abo.run(
-            cast_ballot_json="SOMETHING",
+            cast_ballot=DEFAULT_CAST_BALLOT,
+            cast_ballot_json=cast_ballot_json,
             merge_contests=True,
         )
         return {"ballot_check": ballot_check, "voter_index": voter_index}
