@@ -29,13 +29,14 @@ default:
 	@echo "${RED}There is no default make target.${END}  Specify one of:"
 	@echo "pylint                  - runs pylint"
 	@echo "pytest                  - runs pytest"
+	@echo "reqs                    - generates a new requirements.txt file"
 	@echo "etags                   - constructs an emacs tags table"
 	@echo ""
 	@echo "See ${BUILD_DIR}/README.md for more details and info"
 
 # Run pylint
 .PHONY: pylint
-pylint: requirements.txt
+pylint:
 	@echo "${RED}NOTE - isort and black disagree on 3 files${END} - let black win"
 	isort ${SRC_DIR} ${TEST_DIR}
 	black ${SRC_DIR} ${TEST_DIR}
