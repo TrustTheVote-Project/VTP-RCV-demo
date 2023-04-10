@@ -22,7 +22,7 @@ class BaseContest(BaseModel):
     uid: str
     win_by: float = 0.5
 
-class ContestentContest(BaseContest):
+class ContestantContest(BaseContest):
 
 class QuestionContest(BaseModel):
     description: str
