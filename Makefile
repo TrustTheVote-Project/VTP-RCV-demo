@@ -55,5 +55,6 @@ etags: ${ETAG_SRCS}
 	etags ${ETAG_SRCS}
 
 # Generate a requirements.txt for dependabot (ignoring the symlinks)
+.PHONY: reqs
 reqs requirements.txt: pyproject.toml poetry.lock
 	poetry export --with dev -f requirements.txt --output requirements.txt
