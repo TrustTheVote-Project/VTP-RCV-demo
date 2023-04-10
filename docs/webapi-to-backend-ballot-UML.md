@@ -24,18 +24,18 @@ class Ticket {
 }
 
   class Contest {
-    +List choices # order is important
+    +List choices          # order is important
     +String vote_variation # RCV, plurality
-    +String uid # unique to election only
-    +Float win_threshold # default = 0.5
-    +Int votes_allowed # defines overvote
-    +String write_in # unimplemented
-    +List selection # index + name
+    +String uid            # unique to election only
+    +Float win_threshold   # default = 0.5
+    +Int votes_allowed     # defines overvote
+    +String write_in       # unimplemented
+    +List selection        # index + name
   }
 
   class Ballot {
-    +List active_ggos # order is important
-    +Dict contests # ordered by active_ggos
-    +String ballot_status # blank or cast
+    +List active_ggos      # order is important
+    +Dict contests         # ordered by active_ggos
+    +String ballot_status  # blank or cast
   }
 ```
