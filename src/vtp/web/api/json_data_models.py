@@ -20,7 +20,7 @@ class BaseContest(BaseModel):
     selection: List[str]
     tally: str
     uid: str
-    win-by: float = 0.5
+    win_by: float = 0.5
 
 class ContestentContest(BaseContest):
 
