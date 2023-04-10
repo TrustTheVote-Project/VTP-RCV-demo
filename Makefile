@@ -14,6 +14,7 @@ DOC_DIR     := docs
 SRC_DIR     := src/vtp/web/api
 TEST_DIR    := tests
 
+# Use colors for errors and warnings when in an interactive terminal
 INTERACTIVE := $(shell test -t 0 && echo 1)
 ifdef INTERACTIVE
     RED	:= \033[0;31m
