@@ -32,7 +32,7 @@ class TicketContest(BaseModel):
     ticket_offices: List[str]
 
 class ContestDict(BaseModel):
-    __root__: List[Dict[str, Union[ContestentContest, QuestionContest, TicketContest]]]
+    __root__: List[Dict[str, Union[ContestantContest, QuestionContest, TicketContest]]]
 
 class CastBallot(BaseModel):
     active_ggos: List[str]
