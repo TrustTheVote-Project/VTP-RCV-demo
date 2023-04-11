@@ -31,7 +31,7 @@ class TicketContest(BaseModel):
     contest_type: str = "ticket"
     ticket_offices: List[str]
 
-class ContestDict(BaseModel):
+class AnyContest(BaseModel):
     __root__: List[Dict[str, Union[ContestantContest, QuestionContest, TicketContest]]]
 
 class CastBallot(BaseModel):
