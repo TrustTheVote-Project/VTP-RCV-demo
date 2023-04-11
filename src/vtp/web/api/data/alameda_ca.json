@@ -1,0 +1,146 @@
+{
+    "active_ggos": [
+        ".",
+        "GGOs/states/California",
+        "GGOs/states/California/GGOs/counties/Alameda",
+        "GGOs/states/California/GGOs/towns/Alameda"
+    ],
+    "ballot_node": "GGOs/states/California/GGOs/towns/Alameda",
+    "ballot_subdir": "GGOs/states/California/GGOs/towns/Alameda",
+    "contests": {
+        "GGOs/states/California": [
+            {
+                "US president": {
+                    "choices": [
+                        {
+                            "name": "Mitt Romney",
+                            "party": "Circle Party"
+                        },
+                        {
+                            "name": "Phil Scott",
+                            "party": "Circle Party"
+                        },
+                        {
+                            "name": "Ron DeSantis",
+                            "party": "Circle Party"
+                        },
+                        {
+                            "name": "Kamala Harris",
+                            "party": "Triangle Party"
+                        },
+                        {
+                            "name": "Cory Booker",
+                            "party": "Triangle Party"
+                        },
+                        {
+                            "name": "Beta O'rourke",
+                            "party": "Triangle Party"
+                        }
+                    ],
+                    "tally": "rcv",
+                    "uid": "0000"
+                }
+            },
+            {
+                "US senate": {
+                    "choices": [
+                        {
+                            "name": "Larry Hogan",
+                            "party": "Circle Party"
+                        },
+                        {
+                            "name": "Greg Abbott",
+                            "party": "Circle Party"
+                        },
+                        {
+                            "name": "Pramila Jayapal",
+                            "party": "Triangle Circle Party"
+                        },
+                        {
+                            "name": "Alexandria Ocasio-Cortez",
+                            "party": "Triangle Party"
+                        }
+                    ],
+                    "tally": "rcv",
+                    "uid": "0001"
+                }
+            },
+            {
+                "governor": {
+                    "choices": [
+                        {
+                            "name": "Brian Kemp",
+                            "party": "Circle Party"
+                        },
+                        {
+                            "name": "Bernie Sanders",
+                            "party": "Triangle Party"
+                        }
+                    ],
+                    "tally": "plurality",
+                    "uid": "0002"
+                }
+            }
+        ],
+        "GGOs/states/California/GGOs/counties/Alameda": [
+            {
+                "County Clerk": {
+                    "choices": [
+                        "Jean-Luc Picard",
+                        "Huckleberry Finn",
+                        "Peggy Carter"
+                    ],
+                    "tally": "plurality",
+                    "uid": "0003"
+                }
+            }
+        ],
+        "GGOs/states/California/GGOs/towns/Alameda": [
+            {
+                "mayor": {
+                    "choices": [
+                        {
+                            "name": "Twenty Seven",
+                            "party": "Circle Party"
+                        },
+                        {
+                            "name": "Twenty Eight",
+                            "party": "Triangle Party"
+                        },
+                        {
+                            "name": "Jane Doe",
+                            "party": "Pentagon Party"
+                        },
+                        {
+                            "name": "John Doe",
+                            "party": "Rectangle Party"
+                        }
+                    ],
+                    "tally": "rcv",
+                    "uid": "0005"
+                }
+            },
+            {
+                "Question 1 - school budget override": {
+                    "choices": [
+                        true,
+                        false
+                    ],
+                    "tally": "plurality",
+                    "uid": "0006"
+                }
+            },
+            {
+                "Question 2 - new firehouse land purchase": {
+                    "choices": [
+                        true,
+                        false
+                    ],
+                    "tally": "plurality",
+                    "uid": "0007",
+                    "win-by": "2/3"
+                }
+            }
+        ]
+    }
+}
