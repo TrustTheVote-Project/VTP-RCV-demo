@@ -1,8 +1,7 @@
 """API endpoints for the VoteTrackerPlus backend"""
 
-from fastapi import FastAPI
-
 from backend import VtpBackend
+from fastapi import FastAPI
 
 app = FastAPI()
 
@@ -43,9 +42,9 @@ async def get_empty_ballot(vote_store_id: str) -> dict:
 # Endpoint #3
 @app.post("/vote/{vote_store_id}/cast-ballot")
 async def cast_ballot(
-        vote_store_id: str,
-        incoming_cast_ballot: dict = None,
-    ) -> dict:
+    vote_store_id: str,
+    incoming_cast_ballot: dict = None,
+) -> dict:
     """
     Uploads the ballot; the backend accepts it, merges it, and returns
     the ballot check and voter index
@@ -53,7 +52,9 @@ async def cast_ballot(
 
     if vote_store_id in vote_store_ids:
         if vote_store_ids[vote_store_id] == "uncast":
-            ballot_check, voter_index = VtpBackend.cast_ballot(vote_store_id, incoming_cast_ballot)
+            ballot_check, voter_index = VtpBackend.cast_ballot(
+                vote_store_id, incoming_cast_ballot
+            )
             vote_store_ids[vote_store_id] = "cast"
             return {"ballot_check": ballot_check, "voter_index": voter_index}
         return {"error": "This ballot has already been cast"}
@@ -63,10 +64,10 @@ async def cast_ballot(
 # Endpoint #4
 @app.post("/vote/{vote_store_id}/verify-ballot-check")
 async def verify_ballot_check(
-        vote_store_id: str,
-        ballot_check: list = None,
-        vote_index: int = 0,
-    ) -> dict:
+    vote_store_id: str,
+    ballot_check: list = None,
+    vote_index: int = 0,
+) -> dict:
     """
     Will verify the ballot-check and voter-id.  Return values are TBD
     pending further discussions
@@ -85,3 +86,27 @@ async def verify_ballot_check(
 
 
 # Endpoint #5
+@app.post("/vote/{vote_store_id}/tally-election")
+async def tally_election(
+    vote_store_id: str,
+    contest_uids: str = None,
+    track_contests: list = None,
+    verbosity: int = 3,
+) -> dict:
+    """
+    Will execute the tally, optionally limited to a list of contests,
+    tracking an optional list of digests, with an optional verbosity
+    level.
+    """
+
+    if vote_store_id in vote_store_ids:
+        if vote_store_ids[vote_store_id] == "cast":
+            tally_election_doc = VtpBackend.tally_election_check(
+                vote_store_id,
+                contest_uids,
+                track_contests,
+                verbosity,
+            )
+            return {"tally_election_doc": tally_election_doc}
+        return {"error": "The supplied rest endpoint (URL) is not a valid URL"}
+    return {"error": "VoteStoreID not found"}

@@ -7,6 +7,7 @@ import os
 from vtp.ops.accept_ballot_operation import AcceptBallotOperation
 from vtp.ops.cast_ballot_operation import CastBallotOperation
 from vtp.ops.setup_vtp_demo_operation import SetupVtpDemoOperation
+from vtp.ops.tally_contests_operation import TallyContestsOperation
 from vtp.ops.verify_ballot_receipt_operation import VerifyBallotReceiptOperation
 
 
@@ -124,13 +125,12 @@ class VtpBackend:
             merge_contests=True,
         )
 
-
     @staticmethod
     def verify_ballot_check(
-            vote_store_id: str,
-            ballot_check: list,
-            vote_index: int,
-        ) -> str:
+        vote_store_id: str,
+        ballot_check: list,
+        vote_index: int,
+    ) -> str:
         """
         Will verify a ballot-check and vote-inded, returning an
         undefined string at this time.
@@ -150,4 +150,32 @@ class VtpBackend:
             receipt_csv=ballot_check,
             row=vote_index,
             cvr=True,
+        )
+
+    @staticmethod
+    def tally_election_check(
+        vote_store_id: str,
+        contest_uids: list = None,
+        track_contests: list = None,
+        verbosity: int = 3,
+    ) -> str:
+        """
+        Will verify a ballot-check and vote-inded, returning an
+        undefined string at this time.
+        """
+        VtpBackend.set_election_data()
+        if VtpBackend._MOCK_MODE:
+            # Just return a mock ballot-check and voter-index
+            with open(VtpBackend._MOCK_BLANK_BALLOT, "r", encoding="utf8") as infile:
+                csv_doc = csv.reader(infile)
+            return csv_doc, VtpBackend._MOCK_VOTER_INDEX
+        # handle the incoming ballot and return the ballot-check and voter-index
+        operation = TallyContestsOperation(
+            guid=vote_store_id,
+            verbosity=verbosity,
+        )
+        return operation.run(
+            guid=vote_store_id,
+            contest_uid=contest_uids,
+            track_contests=track_contests,
         )
