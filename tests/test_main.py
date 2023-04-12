@@ -65,3 +65,19 @@ def test_verify_ballot_check(test_get_vote_store_id, test_cast_ballot):
     )
     assert response.status_code == 200
     assert "ballot-check-doc" in response.json()
+
+
+# Endpoint #5
+def test_tally_election(test_get_vote_store_id):
+    """testing the tally"""
+    # import pdb; pdb.set_trace()
+    response = client.post(
+        f"/vote/tally-election/{test_get_vote_store_id}",
+        json={
+            "contest-uids": None,
+            "track-contests": "123",
+            "verbosity": 3,
+        },
+    )
+    assert response.status_code == 200
+    assert "tally-election-doc" in response.json()

@@ -151,7 +151,6 @@ class VtpBackend:
             json_doc = json.load(infile)
             return json_doc
 
-
     @staticmethod
     def mock_get_ballot_check() -> tuple[list, int]:
         """Mock only - return a static cast ballot"""
@@ -159,7 +158,6 @@ class VtpBackend:
         with open(VtpBackend._mock_ballot_check, "r", encoding="utf8") as infile:
             csv_doc = list(csv.reader(infile))
         return csv_doc, VtpBackend._MOCK_VOTER_INDEX
-
 
     @staticmethod
     def cast_ballot(vote_store_id: str, cast_ballot: dict) -> dict:
@@ -180,7 +178,6 @@ class VtpBackend:
             cast_ballot_json=cast_ballot,
             merge_contests=True,
         )
-
 
     @staticmethod
     def mock_get_verify_ballot_string() -> str:
@@ -203,7 +200,6 @@ class VtpBackend:
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = VerifyBallotReceiptOperation(
             guid=vote_store_id,
-            verbosity=VtpBackend._VERBOSITY,
         )
         return operation.run(
             receipt_csv=incoming_json["ballot-check"],
@@ -211,12 +207,10 @@ class VtpBackend:
             cvr=True,
         )
 
-
     @staticmethod
     def mock_get_tally_string() -> str:
         """Return a mock tally string"""
         return "Good Morning"
-
 
     @staticmethod
     def tally_election_check(
@@ -232,10 +226,9 @@ class VtpBackend:
             # Just return a mock tally string
             return VtpBackend.mock_get_tally_string()
         # handle the incoming ballot and return the ballot-check and voter-index
-        verbosity = 3 if not "verbosity" in incoming_json else incoming_json["verbosity"]
         operation = TallyContestsOperation(
             guid=vote_store_id,
-            verbosity=verbosity,
+            verbosity=incoming_json["verbosity"],
         )
         return operation.run(
             contest_uid=incoming_json["contest-uids"],
