@@ -15,6 +15,7 @@ def test_get_root():
     assert "version" in response.json()
 
 
+# Endpoint #1
 @pytest.fixture
 def test_get_vote_store_id():
     """Test retreiving and printing a voter store id guid"""
@@ -25,12 +26,42 @@ def test_get_vote_store_id():
     return response.json()["VoteStoreID"]
 
 
+# Endpoint #2
+@pytest.fixture
 def test_get_empty_ballot(test_get_vote_store_id):
-    """test with invalid VoteStoreID"""
+    """Test with invalid VoteStoreID"""
     response = client.get("/vote/00000X")
     assert response.status_code == 200
     assert "error" in response.json()
     # test with valid VoteStoreID
     response = client.get(f"/vote/{test_get_vote_store_id}")
     assert response.status_code == 200
-    assert "ballot" in response.json()
+    assert "blank-ballot" in response.json()
+    return response.json()["blank-ballot"]
+
+
+# Endpoint #3
+@pytest.fixture
+def test_cast_ballot(test_get_vote_store_id, test_get_empty_ballot):
+    """test casting a filled-in ballot"""
+    # import pdb; pdb.set_trace()
+    response = client.post(
+        f"/vote/cast-ballot/{test_get_vote_store_id}",
+        json=test_get_empty_ballot,
+    )
+    assert response.status_code == 200
+    assert "ballot-check" in response.json()
+    assert "vote-index" in response.json()
+    return response.json()
+
+
+# Endpoint #4
+def test_verify_ballot_check(test_get_vote_store_id, test_cast_ballot):
+    """testing the verification of a ballot check"""
+    # import pdb; pdb.set_trace()
+    response = client.post(
+        f"/vote/verify-ballot-check/{test_get_vote_store_id}",
+        json=test_cast_ballot,
+    )
+    assert response.status_code == 200
+    assert "ballot-check-doc" in response.json()
