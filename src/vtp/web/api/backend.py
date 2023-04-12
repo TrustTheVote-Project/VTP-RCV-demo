@@ -1,8 +1,8 @@
 """
 Backend support for the web-api.  One important aspect of this file is
 to support web-api testing in the absense of a live ElectionData
-deployment.  An ElectionData deployment is when a setup-mock-election
-operation has been run, nominally creating a
+deployment.  An ElectionData deployment is when a
+setup-vtp-demo-operation operation has been run, nominally creating a
 /opt/VoteTrackerPlus/demo.01 ElectionData folder and the required
 subfolders.
 
@@ -14,16 +14,20 @@ executed.  Currently this state is configured by the _MOCK_MODE
 variable below.  When set, and when this repo is part of the
 VTP-dev-env parent repo (or when the VoteTrackerPlus and
 VTP-mock-election.US.xx repos are simply sibling repos of this one),
-the commands here do call into the VoteTrackerPlus repo and instead
-stub out the IO with static, non-varying mock data.  That mock data is
-currently nominally stored in (checked into) the
-VTP-mock-election.US.xx repo as it is a function of the live
-ElectionData election configuration and CVR data found in that repo.
-This is specifically due to two things: the VTP-mock-election.US.xx
-holds the configuration of an election such as the blank ballot
-definition as well as several hundred pre-cast random ballots so to
-fill the ballot cache so that ballot-checks can be immediately
-produced upon casting a ballot.
+the commands here do not call into the VoteTrackerPlus repo and
+instead stub out the effective IO operations with static, non-varying
+mock data.  That mock data is currently nominally stored in (checked
+into) the VTP-mock-election.US.xx repo as the mock data is a direct
+function of the live ElectionData election configuration and CVR data
+found in that repo.  And that is due to two things: 1) the
+VTP-mock-election.US.xx holds the configuration of an election such as
+the blank ballot definition and 2) it also holds several hundred
+pre-cast random ballots so to fill the ballot cache so that
+ballot-checks can be immediately produced upon casting a ballot.
+
+Regardless, for the time being the VTP-mock-election.US.xx also holds
+checkedin mock values for the data that the web-api and above layers
+need when running in mock mode.
 """
 
 import csv
