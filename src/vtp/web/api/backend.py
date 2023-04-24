@@ -37,6 +37,7 @@ from vtp.core.common import Common
 from vtp.ops.accept_ballot_operation import AcceptBallotOperation
 from vtp.ops.cast_ballot_operation import CastBallotOperation
 from vtp.ops.setup_vtp_demo_operation import SetupVtpDemoOperation
+from vtp.ops.show_contests_operation import ShowContestsOperation
 from vtp.ops.tally_contests_operation import TallyContestsOperation
 from vtp.ops.verify_ballot_receipt_operation import VerifyBallotReceiptOperation
 
@@ -54,16 +55,16 @@ class VtpBackend:
     # where the cast-ballot.json file is stored for the spring demo
     _MOCK_CAST_BALLOT = "mock-data/cast-ballot.json"
     # where the ballot-check is stored for the spring demo
-    _MOCK_BALLOT_CHECK = "mock-data/receipts.26.csv"
+    _MOCK_BALLOT_CHECK = "mock-data/receipt.26.csv"
     _MOCK_VOTER_INDEX = 26
+    # a mock contest content
+    _MOCK_CONTEST_CONTENT = "mock-data/mock_contest.json"
     # default guid - making one up
     _MOCK_GUID = "01d963fd74100ee3f36428740a8efd8afd781839"
     # default mock receipt log
     _MOCK_VERIFY_BALLOT_RECEIPT_LOG = "Hello World"
     # default mock tally log
     _MOCK_TALLY_CONTESTS_LOG = "Good Morning"
-    # backend verbosity
-    _VERBOSITY = 3
     # backend default address
     _ADDRESS = "123, Main Street, Concord, Massachusetts"
 
@@ -77,7 +78,6 @@ class VtpBackend:
             return VtpBackend._MOCK_GUID
         operation = SetupVtpDemoOperation(
             election_data_dir=Common.get_generic_ro_edf_dir(),
-            verbosity=VtpBackend._VERBOSITY,
         )
         return operation.run(guid_client_store=True)
 
@@ -96,7 +96,6 @@ class VtpBackend:
         # Cet a (the) blank ballot from the backend
         operation = CastBallotOperation(
             election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
-            verbosity=VtpBackend._VERBOSITY,
         )
         return operation.run(
             an_address = VtpBackend._ADDRESS,
@@ -136,7 +135,6 @@ class VtpBackend:
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = AcceptBallotOperation(
             election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
-            verbosity=VtpBackend._VERBOSITY,
         )
         return operation.run(
             cast_ballot_json=cast_ballot,
@@ -146,7 +144,9 @@ class VtpBackend:
     @staticmethod
     def verify_ballot_check(
         vote_store_id: str,
-        incoming_json: dict,
+        ballot_check: list,
+        vote_index: int,
+        cvr: bool = False,
     ) -> str:
         """
         Endpoint #4: will verify a ballot-check and vote-inded, returning an
@@ -158,21 +158,22 @@ class VtpBackend:
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = VerifyBallotReceiptOperation(
             election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
+            stdout_printing=False,
         )
         return operation.run(
-            receipt_data=incoming_json["ballot-check"],
-            row=incoming_json["vote-index"],
-            cvr=True,
+            receipt_data=ballot_check,
+            row=str(vote_index),
+            cvr=cvr,
         )
 
     @staticmethod
     def tally_election_check(
         vote_store_id: str,
-        incoming_json: dict,
+        contests: str,
+        digests: str,
     ) -> str:
         """
-        Endpoint #5: will verify a ballot-check and vote-inded,
-        returning an undefined string at this time.
+        Endpoint #5: will tally an election and print stuff
         """
         if VtpBackend._MOCK_MODE:
             # Just return a mock tally string
@@ -180,9 +181,35 @@ class VtpBackend:
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = TallyContestsOperation(
             election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
-            verbosity=incoming_json["verbosity"],
+            stdout_printing=False,
+        )
+        if digests == "None":
+            digests = ""
+        if contests == "None":
+            contests = ""
+        return operation.run(
+            contest_uid=contests,
+            track_contests=digests,
+        )
+
+    @staticmethod
+    def show_contest(
+        vote_store_id: str,
+        contests: str,
+    ) -> dict:
+        """
+        Endpoint #6: display the contents of one or more contests
+        """
+        if VtpBackend._MOCK_MODE:
+            # Just return a mock contest
+            with open(VtpBackend._MOCK_CONTEST_CONTENT, "r", encoding="utf8") as infile:
+                json_doc = json.load(infile)
+            return json_doc
+        # handle the show_contest
+        operation = ShowContestsOperation(
+            election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
+            stdout_printing=False,
         )
         return operation.run(
-            contest_uid=incoming_json["contest-uids"],
-            track_contests=incoming_json["track-contests"],
+            contest_check=contests
         )

@@ -71,7 +71,7 @@ async def restore_existing_guids() -> dict:
 @app.post("/cast-ballot/{vote_store_id}")
 async def cast_ballot(
     vote_store_id: str,
-    incoming_json: dict = None,
+    incoming_json: dict,
 ) -> dict:
     """
     Uploads the ballot; the backend accepts it, merges it, and returns
@@ -95,7 +95,7 @@ async def cast_ballot(
 @app.post("/verify-ballot-check/{vote_store_id}")
 async def verify_ballot_check(
     vote_store_id: str,
-    incoming_json: dict = None,
+    incoming_json: dict,
 ) -> dict:
     """
     Will verify the ballot-check and voter-id.  Return values are TBD
@@ -103,32 +103,60 @@ async def verify_ballot_check(
     """
 
     #    import pdb; pdb.set_trace()
+    ballot_check = incoming_json["ballot-check"]
+    vote_index = incoming_json["vote-index"]
     if vote_store_id in vote_store_ids:
         ballot_check_doc = VtpBackend.verify_ballot_check(
             vote_store_id,
-            incoming_json,
+            ballot_check,
+            vote_index,
         )
         return {"ballot-check-doc": ballot_check_doc}
     return {"error": "VoteStoreID not found"}
 
 
 # Endpoint #5
-@app.get("/tally-election/{vote_store_id}/{contest}/{digests}")
+@app.get("/tally-election/{vote_store_id}/{contests}/{digests}")
 async def tally_election(
     vote_store_id: str,
-    incoming_json: dict = None,
+    contests: str,
+    digests: str,
 ) -> dict:
     """
     Will execute the tally, optionally limited to a list of contests,
     tracking an optional list of digests, with an optional verbosity
     level.
+
+    The contests and digests fields are optional but must be a comma
+    separated string (no spaces).  If not specified they should be the
+    string "None".
     """
 
     #    import pdb; pdb.set_trace()
     if vote_store_id in vote_store_ids:
         tally_election_doc = VtpBackend.tally_election_check(
             vote_store_id,
-            incoming_json,
+            contests,
+            digests,
         )
         return {"tally-election-doc": tally_election_doc}
+    return {"error": "VoteStoreID not found"}
+
+# Endpoint #6
+@app.get("/show-contest/{vote_store_id}/{contests}")
+async def show_contest(
+    vote_store_id: str,
+    contests: str,
+) -> dict:
+    """
+    Will display the CVR contents of one or more contests
+    """
+
+    #    import pdb; pdb.set_trace()
+    if vote_store_id in vote_store_ids:
+        show_contest_doc = VtpBackend.show_contest(
+            vote_store_id,
+            contests,
+        )
+        return {"show-contest-doc": show_contest_doc}
     return {"error": "VoteStoreID not found"}
