@@ -62,9 +62,11 @@ class VtpBackend:
     # default guid - making one up
     _MOCK_GUID = "01d963fd74100ee3f36428740a8efd8afd781839"
     # default mock receipt log
-    _MOCK_VERIFY_BALLOT_RECEIPT_LOG = "Hello World"
+    _MOCK_VERIFY_BALLOT_LOG = "mock-data/verify-ballot-doc.json"
     # default mock tally log
-    _MOCK_TALLY_CONTESTS_LOG = "Good Morning"
+    _MOCK_TALLY_CONTESTS_LOG = "mock-data/tally-election-doc.json"
+    # default mock show contest log
+    _MOCK_SHOW_CONTEST_LOG = "mock-data/show-contest-doc.json"
     # backend default address
     _ADDRESS = "123, Main Street, Concord, Massachusetts"
 
@@ -154,7 +156,9 @@ class VtpBackend:
         """
         if VtpBackend._MOCK_MODE:
             # Just return a mock verify ballot string
-            return VtpBackend._MOCK_VERIFY_BALLOT_RECEIPT_LOG
+            with open(VtpBackend._MOCK_VERIFY_BALLOT_LOG, "r", encoding="utf8") as infile:
+                json_doc = json.load(infile)
+            return json_doc
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = VerifyBallotReceiptOperation(
             election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
@@ -177,7 +181,9 @@ class VtpBackend:
         """
         if VtpBackend._MOCK_MODE:
             # Just return a mock tally string
-            return VtpBackend._MOCK_TALLY_CONTESTS_LOG
+            with open(VtpBackend._MOCK_TALLY_CONTESTS_LOG, "r", encoding="utf8") as infile:
+                json_doc = json.load(infile)
+            return json_doc
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = TallyContestsOperation(
             election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
@@ -202,7 +208,7 @@ class VtpBackend:
         """
         if VtpBackend._MOCK_MODE:
             # Just return a mock contest
-            with open(VtpBackend._MOCK_CONTEST_CONTENT, "r", encoding="utf8") as infile:
+            with open(VtpBackend._MOCK_SHOW_CONTEST_LOG, "r", encoding="utf8") as infile:
                 json_doc = json.load(infile)
             return json_doc
         # handle the show_contest
