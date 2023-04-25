@@ -154,9 +154,8 @@ async def show_contest(
 
     #    import pdb; pdb.set_trace()
     if vote_store_id in vote_store_ids:
-        show_contest_doc = VtpBackend.show_contest(
+        return VtpBackend.show_contest(
             vote_store_id,
             contests,
         )
-        return {"show-contest-doc": show_contest_doc}
     return {"error": "VoteStoreID not found"}
