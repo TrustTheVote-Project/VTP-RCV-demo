@@ -216,6 +216,4 @@ class VtpBackend:
             election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
             stdout_printing=False,
         )
-        return operation.run(
-            contest_check=contests
-        )
+        return {"contents": operation.run(contest_check=contests)}
