@@ -43,7 +43,11 @@ from vtp.ops.verify_ballot_receipt_operation import VerifyBallotReceiptOperation
 
 
 class VtpBackend:
-    """Class to keep the namespace separate"""
+    """
+    Class to keep the namespace separate and allow the creation of a
+    shim layer in the VTP-web-api repo so that this repo can easily
+    talk with the VoteTrackerPlus backend repo.
+    """
 
     ########
     # backend demo constants
