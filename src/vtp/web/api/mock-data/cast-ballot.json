@@ -86,7 +86,7 @@
                 }
             },
             {
-                "governor": {
+                "Governor": {
                     "choices": [
                         {
                             "name": "Spencer Cogswell",
