@@ -71,7 +71,7 @@ def test_verify_ballot_check(vote_store_id, cast_ballot):
 
 
 # Endpoint #5
-def test_tally_election(test_get_vote_store_id):
+def test_tally_election(vote_store_id):
     """testing the tally"""
     # import pdb; pdb.set_trace()
     response = client.post(
