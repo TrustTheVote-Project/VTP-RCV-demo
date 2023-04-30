@@ -101,8 +101,8 @@ async def verify_ballot_check(
     """
 
     #    import pdb; pdb.set_trace()
-    ballot_check = incoming_json["ballot-check"]
-    vote_index = incoming_json["vote-index"]
+    ballot_check = incoming_ballot_data["ballot-check"]
+    vote_index = incoming_ballot_data["vote-index"]
     if vote_store_id in vote_store_ids:
         ballot_check_doc = VtpBackend.verify_ballot_check(
             vote_store_id,
