@@ -14,7 +14,7 @@ from pydantic import BaseModel
 
 
 class Choice(BaseModel):
-    """A VTP choice data structure"""
+    """A choice made by a voter in a contest"""
 
     name: str
     party: str = None
