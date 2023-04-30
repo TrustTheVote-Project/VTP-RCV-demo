@@ -38,15 +38,6 @@ async def get_empty_ballot(vote_store_id: str) -> dict:
         return {"blank-ballot": empty_ballot}
     return {"error": "VoteStoreID not found"}
 
-
-# for testing - reuse a guid
-@app.get("/reuse/{vote_store_id}")
-async def reuse_guid(vote_store_id: str) -> dict:
-    """Reuse a pre-existing guid workspace"""
-
-    vote_store_ids[vote_store_id] = "uncast"
-    return {"VoteStoreID": vote_store_id}
-
 # for testing - show a mock cast ballot
 @app.get("/show-mock-ballot")
 async def show_mock_cast_ballot() -> dict:
@@ -55,6 +46,7 @@ async def show_mock_cast_ballot() -> dict:
     a_cast_ballot = VtpBackend.mock_get_cast_ballot()
     return {"cast-ballot": a_cast_ballot}
 
+# for testing - reuse a guid
 @app.get("/restore-existing-guids")
 async def restore_existing_guids() -> dict:
     """Will restore the existing vote_store_id's"""
