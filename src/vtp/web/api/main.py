@@ -19,7 +19,7 @@ async def root() -> dict:
 
 
 # Endpoint #1
-@app.get("/vote/")
+@app.post("/vote")
 async def get_vote_store_id() -> dict:
     """Create and store a unique Vote Store ID for each client"""
 
