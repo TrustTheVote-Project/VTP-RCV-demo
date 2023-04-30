@@ -157,7 +157,6 @@ async def show_contest(
     """
 
     #    import pdb; pdb.set_trace()
-    if vote_store_id in vote_store_ids:
         return VtpBackend.show_contest(
             vote_store_id,
             contests,
