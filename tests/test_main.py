@@ -43,13 +43,14 @@ def test_get_empty_ballot(test_get_vote_store_id):
 
 # Endpoint #3
 @pytest.fixture
-def test_cast_ballot(test_get_vote_store_id, test_get_empty_ballot):
-    """test casting a filled-in ballot"""
-    # import pdb; pdb.set_trace()
+def cast_ballot(vote_store_id, empty_ballot):
+    """Cast of a filled-in ballot"""
+    # breakpoint()
     response = client.post(
-        f"/vote/cast-ballot/{test_get_vote_store_id}",
-        json=test_get_empty_ballot,
-    )
+        f"/vote/cast-ballot/{vote_store_id}",
+        json=empty_ballot.json(),
+     )
+     return response
     assert response.status_code == 200
     assert "ballot-check" in response.json()
     assert "vote-index" in response.json()
