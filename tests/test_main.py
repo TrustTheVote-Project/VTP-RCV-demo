@@ -52,10 +52,10 @@ def cast_ballot(vote_store_id, empty_ballot):
         json=empty_ballot.json(),
      )
      return response
-    assert response.status_code == 200
-    assert "ballot-check" in response.json()
-    assert "vote-index" in response.json()
-    return response.json()
+def test_cast_ballot(vote_store_id, empty_ballot)
+    assert empty_ballot.status_code == 200
+    assert "ballot-check" in empty_ballot.json()
+    assert "vote-index" in empty_ballot.json()
 
 
 # Endpoint #4
