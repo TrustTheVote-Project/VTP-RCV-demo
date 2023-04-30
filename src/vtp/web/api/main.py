@@ -127,8 +127,9 @@ async def tally_election(
 ) -> dict:
     """
     Will execute the tally, optionally limited to a list of contests,
-    tracking an optional list of digests, with an optional verbosity
-    level.
+    tracking an optional list of digests.  At some later time with a
+    better understanding of the client side UX a verbosity switch
+    could be added.  Perhaps.
 
     The contests and digests fields are optional but must be a comma
     separated string (no spaces).  If not specified they should be the
