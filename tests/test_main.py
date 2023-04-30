@@ -63,8 +63,8 @@ def test_verify_ballot_check(vote_store_id, cast_ballot):
     """testing the verification of a ballot check"""
     # import pdb; pdb.set_trace()
     response = client.post(
-        f"/vote/verify-ballot-check/{test_get_vote_store_id}",
-        json=test_cast_ballot,
+        f"/vote/verify-ballot-check/{vote_store_id}",
+        json=cast_ballot.json(),
     )
     assert response.status_code == 200
     assert "ballot-check-doc" in response.json()
