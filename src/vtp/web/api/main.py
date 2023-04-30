@@ -47,7 +47,7 @@ async def show_mock_cast_ballot() -> dict:
     return {"cast-ballot": a_cast_ballot}
 
 # for testing - reuse a guid
-@app.get("/restore-existing-guids")
+@app.post("/restore-existing-guids")
 async def restore_existing_guids() -> dict:
     """Will restore the existing vote_store_id's"""
     guids = VtpBackend.get_all_guid_workspaces()
