@@ -71,7 +71,7 @@ async def cast_ballot(
     the ballot check and voter index
     """
 
-    # import pdb; pdb.set_trace()
+    # breakpoint()
     if vote_store_id in vote_store_ids:
         if vote_store_ids[vote_store_id] != "cast":
             ballot_check, vote_index = VtpBackend.cast_ballot(
