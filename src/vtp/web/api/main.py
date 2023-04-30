@@ -92,7 +92,7 @@ async def cast_ballot(
 @app.post("/verify-ballot-check/{vote_store_id}")
 async def verify_ballot_check(
     vote_store_id: str,
-    incoming_json: dict,
+    incoming_ballot_data: dict,
 ) -> dict:
     """
     Will verify the ballot-check and voter-id.  Return values are TBD
