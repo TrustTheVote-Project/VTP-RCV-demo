@@ -55,11 +55,12 @@ async def restore_existing_guids() -> dict:
         vote_store_ids[guid] = "restored"
     return { "restored": guids }
 
-# To manually test endpoint #3
-# pylint: disable=line-too-long
-#  curl -i -X POST -H 'Content-Type: application/json' -d '{"active_ggos":[".","GGOs/states/Massachusetts","GGOs/states/Massachusetts/GGOs/counties/Middlesex","GGOs/states/Massachusetts/GGOs/towns/Concord"],"ballot_filename":"000,001,002,003,ballot.json","ballot_node":"GGOs/states/Massachusetts/GGOs/towns/Concord","ballot_subdir":"GGOs/states/Massachusetts/GGOs/towns/Concord","contests":{"GGOs/states/Massachusetts":[{"US president":{"choices":[{"name":"Circle Party Ticket","ticket_names":["Rey Skywalker","Obi-Wan Kenobi"]},{"name":"Square Party Ticket","ticket_names":["Atticus Finch","Hermione  Granger"]},{"name":"Triangle Party Ticket","ticket_names":["Evelyn Quan Wang","Waymond Wang"]}],"contest_type":"ticket","selection":["2: Triangle Party Ticket","1: Square Party Ticket"],"tally":"rcv","ticket_offices":["President","Vice President"],"uid":"0000"}},{"US senate":{"choices":[{"name":"Anthony Alpha","party":"Circle Party"},{"name":"Betty Beta","party":"Pentagon Party"},{"name":"Gloria Gamma","party":"Square Party"},{"name":"David Delta","party":"Triangle Party"},{"name":"Emily Echo","party":"Ellipse Party"},{"name":"Francis Foxtrot","party":"Octagon Party"}],"selection":["5: Francis Foxtrot","3: David Delta","1: Betty Beta"],"tally":"rcv","uid":"0001"}},{"governor":{"choices":[{"name":"Spencer Cogswell","party":"Circle Party"},{"name":"Cosmo Spacely","party":"Triangle Party"}],"max":1,"selection":["1: Cosmo Spacely"],"tally":"plurality","uid":"0002"}}],"GGOs/states/Massachusetts/GGOs/counties/Middlesex":[{"County Clerk":{"choices":["Jean-Luc Picard","Katniss Everdeen","James T. Kirk"],"max":1,"selection":["0: Jean-Luc Picard"],"tally":"plurality","uid":"0003"}}],"GGOs/states/Massachusetts/GGOs/towns/Concord":[{"Question 1 - should the starting time of the annual town meeting be moved to 6:30PM?":{"choices":["yes","no"],"description":"Should the Town of Concord start the annual Town Meeting at 6:30PM instead of 7:00PM?\n","max":1,"selection":["0: yes"],"tally":"plurality","uid":"0004"}}]}}' http://127.0.0.1:8000/cast-ballot/01d963fd74100ee3f36428740a8efd8afd781839
-
 # Endpoint #3
+
+# To manually test endpoint #3 do something like:
+# pylint: disable=line-too-long
+# curl -i -X POST -H 'Content-Type: application/json' -d @docs/cast-ballot.json http://127.0.0.1:8000/cast-ballot/904ac6dc58021d7d9bf9e215bcd69c8e3a28b807
+
 @app.post("/cast-ballot/{vote_store_id}")
 async def cast_ballot(
     vote_store_id: str,
@@ -82,8 +83,12 @@ async def cast_ballot(
         return {"error": "This ballot has already been cast"}
     return {"error": "VoteStoreID not found"}
 
-
 # Endpoint #4
+
+# To manually test #4 do something like:
+# pylint: disable=line-too-long
+# curl -i -X POST -H 'Content-Type: application/json' -d @receipts/receipt.59.json http://127.0.0.1:8000/verify-ballot-check/d08a278a9a6b82040d505b9aae194efb72cceb0e
+
 @app.post("/verify-ballot-check/{vote_store_id}")
 async def verify_ballot_check(
     vote_store_id: str,
@@ -108,6 +113,11 @@ async def verify_ballot_check(
 
 
 # Endpoint #5
+
+# To manually test #4 do something like:
+# pylint: disable=line-too-long
+# curl -i -X GET -H 'Content-Type: application/json' http://127.0.0.1:8000/tally-election/d08a278a9a6b82040d505b9aae194efb72cceb0e/0001/8bef5f87658c40bbe7dcda814422a59e844b204d
+
 @app.get("/tally-election/{vote_store_id}/{contests}/{digests}")
 async def tally_election(
     vote_store_id: str,
