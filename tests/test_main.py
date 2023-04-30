@@ -21,10 +21,11 @@ def vote_store_id():
     """Test retreiving and printing a voter store id guid"""
     response = client.post("/vote")
     return response
-    assert response.status_code == 200
-    assert "VoteStoreID" in response.json()
+def test_get_vote_store_id(vote_store_id)
+    assert vote_store_id.status_code == 200
+    assert "VoteStoreID" in vote_store_id.json()
     # retrieve VoteStoreID from response
-    return response.json()["VoteStoreID"]
+    return vote_store_id.json()["VoteStoreID"]
 
 
 # Endpoint #2
