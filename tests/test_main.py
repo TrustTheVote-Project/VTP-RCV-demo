@@ -19,7 +19,8 @@ def test_get_root():
 @pytest.fixture
 def vote_store_id():
     """Test retreiving and printing a voter store id guid"""
-    response = client.get("/vote/")
+    response = client.post("/vote")
+    return response
     assert response.status_code == 200
     assert "VoteStoreID" in response.json()
     # retrieve VoteStoreID from response
