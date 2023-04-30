@@ -50,7 +50,7 @@ class ContestantUncastContest(BaseUncastContest):
     """
 
     contest_type: str = None
-    descriptiion: str = None
+    description: str = None
 
 
 class ContestantCastContest(BaseCastContest):
