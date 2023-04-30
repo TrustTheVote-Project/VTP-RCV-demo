@@ -147,7 +147,7 @@ async def tally_election(
     return {"error": "VoteStoreID not found"}
 
 # Endpoint #6
-@app.get("/show-contest/{vote_store_id}/{contests}")
+@app.get("/contests/{vote_store_id}/{contests}")
 async def show_contest(
     vote_store_id: str,
     contests: str,
