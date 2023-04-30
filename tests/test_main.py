@@ -59,7 +59,7 @@ def test_cast_ballot(vote_store_id, empty_ballot)
 
 
 # Endpoint #4
-def test_verify_ballot_check(test_get_vote_store_id, test_cast_ballot):
+def test_verify_ballot_check(vote_store_id, cast_ballot):
     """testing the verification of a ballot check"""
     # import pdb; pdb.set_trace()
     response = client.post(
