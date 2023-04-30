@@ -72,16 +72,17 @@ async def cast_ballot(
     """
 
     # breakpoint()
-    if vote_store_id in vote_store_ids:
-        if vote_store_ids[vote_store_id] != "cast":
-            ballot_check, vote_index = VtpBackend.cast_ballot(
-                vote_store_id,
-                incoming_json,
-            )
-            vote_store_ids[vote_store_id] = "cast"
-            return {"ballot-check": ballot_check, "vote-index": vote_index}
+    if vote_store_id not in vote_store_ids:
+        return {"error": "VoteStoreID not found"}
+    if vote_store_ids[vote_store_id] != "cast":
         return {"error": "This ballot has already been cast"}
-    return {"error": "VoteStoreID not found"}
+        
+    ballot_check, vote_index = VtpBackend.cast_ballot(
+        vote_store_id,
+        incoming_ballot_data,
+    )
+    vote_store_ids[vote_store_id] = "cast"
+    return {"ballot-check": ballot_check, "vote-index": vote_index}    
 
 # Endpoint #4
 
