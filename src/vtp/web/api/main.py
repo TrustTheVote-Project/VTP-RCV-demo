@@ -33,10 +33,11 @@ async def get_vote_store_id() -> dict:
 async def get_empty_ballot(vote_store_id: str) -> dict:
     """Return an empty ballot for a given Vote Store ID"""
 
-    if vote_store_id in vote_store_ids:
-        empty_ballot = VtpBackend.get_empty_ballot(vote_store_id)
-        return {"blank-ballot": empty_ballot}
-    return {"error": "VoteStoreID not found"}
+    if vote_store_id not in vote_store_ids:
+        return {"error": "VoteStoreID not found"}
+
+    empty_ballot = VtpBackend.get_empty_ballot(vote_store_id)
+    return {"blank-ballot": empty_ballot}
 
 # for testing - show a mock cast ballot
 @app.get("/show-mock-ballot")
@@ -74,15 +75,15 @@ async def cast_ballot(
     # breakpoint()
     if vote_store_id not in vote_store_ids:
         return {"error": "VoteStoreID not found"}
-    if vote_store_ids[vote_store_id] != "cast":
+    if vote_store_ids[vote_store_id] == "cast":
         return {"error": "This ballot has already been cast"}
-        
+
     ballot_check, vote_index = VtpBackend.cast_ballot(
         vote_store_id,
         incoming_ballot_data,
     )
     vote_store_ids[vote_store_id] = "cast"
-    return {"ballot-check": ballot_check, "vote-index": vote_index}    
+    return {"ballot-check": ballot_check, "vote-index": vote_index}
 
 # Endpoint #4
 
@@ -100,17 +101,18 @@ async def verify_ballot_check(
     pending further discussions
     """
 
-    #    import pdb; pdb.set_trace()
+    #    breakpoint()
     ballot_check = incoming_ballot_data["ballot-check"]
     vote_index = incoming_ballot_data["vote-index"]
-    if vote_store_id in vote_store_ids:
-        ballot_check_doc = VtpBackend.verify_ballot_check(
-            vote_store_id,
-            ballot_check,
-            vote_index,
-        )
-        return {"ballot-check-doc": ballot_check_doc}
-    return {"error": "VoteStoreID not found"}
+    if vote_store_id not in vote_store_ids:
+        return {"error": "VoteStoreID not found"}
+
+    ballot_check_doc = VtpBackend.verify_ballot_check(
+        vote_store_id,
+        ballot_check,
+        vote_index,
+    )
+    return {"ballot-check-doc": ballot_check_doc}
 
 
 # Endpoint #5
@@ -136,15 +138,16 @@ async def tally_election(
     string "None".
     """
 
-    #    import pdb; pdb.set_trace()
-    if vote_store_id in vote_store_ids:
-        tally_election_doc = VtpBackend.tally_election_check(
-            vote_store_id,
-            contests,
-            digests,
-        )
-        return {"tally-election-doc": tally_election_doc}
-    return {"error": "VoteStoreID not found"}
+    #    breakpoint()
+    if vote_store_id not in vote_store_ids:
+        return {"error": "VoteStoreID not found"}
+
+    tally_election_doc = VtpBackend.tally_election_check(
+        vote_store_id,
+        contests,
+        digests,
+    )
+    return {"tally-election-doc": tally_election_doc}
 
 # Endpoint #6
 @app.get("/contests/{vote_store_id}/{contests}")
@@ -156,9 +159,9 @@ async def show_contest(
     Will display the CVR contents of one or more contests
     """
 
-    #    import pdb; pdb.set_trace()
-    if vote_store_id in vote_store_ids:
-         return {"error": "VoteStoreID not found"}
+    #    breakpoint()
+    if vote_store_id not in vote_store_ids:
+        return {"error": "VoteStoreID not found"}
 
     return VtpBackend.show_contest(
             vote_store_id,
