@@ -118,7 +118,7 @@ class AnyCastContest(BaseModel):
     __root__: List[
         Dict[
             str,
-            Union[ContestantUncastContest, QuestionUncastContest, TicketCastContest],
+            Union[ContestantCastContest, QuestionCastContest, TicketCastContest],
         ]
     ]
 
