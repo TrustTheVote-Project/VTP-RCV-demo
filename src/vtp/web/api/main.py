@@ -64,7 +64,7 @@ async def restore_existing_guids() -> dict:
 @app.post("/cast-ballot/{vote_store_id}")
 async def cast_ballot(
     vote_store_id: str,
-    incoming_json: dict,
+    incoming_ballot_data: dict,
 ) -> dict:
     """
     Uploads the ballot; the backend accepts it, merges it, and returns
