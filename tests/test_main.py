@@ -17,7 +17,7 @@ def test_get_root():
 
 # Endpoint #1
 @pytest.fixture
-def test_get_vote_store_id():
+def vote_store_id():
     """Test retreiving and printing a voter store id guid"""
     response = client.get("/vote/")
     assert response.status_code == 200
