@@ -75,7 +75,7 @@ def test_tally_election(vote_store_id):
     """testing the tally"""
     # import pdb; pdb.set_trace()
     response = client.post(
-        f"/vote/tally-election/{test_get_vote_store_id}",
+        f"/vote/tally-election/{vote_store_id}",
         json={
             "contest-uids": None,
             "track-contests": "123",
