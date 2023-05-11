@@ -19,6 +19,8 @@ async def root() -> dict:
 
 
 # Endpoint #1
+#
+# % curl -i -X POST -H 'Content-Type: application/json' http://127.0.0.1:8000/vote
 @app.post("/vote")
 async def get_vote_store_id() -> dict:
     """Create and store a unique Vote Store ID for each client"""
@@ -29,6 +31,8 @@ async def get_vote_store_id() -> dict:
 
 
 # Endpoint #2
+#
+# % curl -i -X POST -H 'Content-Type: application/json' http://127.0.0.1:8000/restore-existing-guids
 @app.get("/vote/{vote_store_id}")
 async def get_empty_ballot(vote_store_id: str) -> dict:
     """Return an empty ballot for a given Vote Store ID"""
@@ -57,8 +61,7 @@ async def restore_existing_guids() -> dict:
     return { "restored": guids }
 
 # Endpoint #3
-
-# To manually test endpoint #3 do something like:
+#
 # pylint: disable=line-too-long
 # curl -i -X POST -H 'Content-Type: application/json' -d @docs/cast-ballot.json http://127.0.0.1:8000/cast-ballot/904ac6dc58021d7d9bf9e215bcd69c8e3a28b807
 
@@ -86,8 +89,7 @@ async def cast_ballot(
     return {"ballot-check": ballot_check, "vote-index": vote_index}
 
 # Endpoint #4
-
-# To manually test #4 do something like:
+#
 # pylint: disable=line-too-long
 # curl -i -X POST -H 'Content-Type: application/json' -d @receipts/receipt.59.json http://127.0.0.1:8000/verify-ballot-check/d08a278a9a6b82040d505b9aae194efb72cceb0e
 
