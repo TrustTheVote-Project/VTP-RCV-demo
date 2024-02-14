@@ -2,7 +2,7 @@
 
 ## Background
 
-Moving the design notes from [VoteTrackerPlus Discussino](https://github.com/TrustTheVote-Project/VoteTrackerPlus/discussions/51#discussioncomment-4772776) to here.
+Moving the design notes from [VoteTrackerPlus Discussion](https://github.com/TrustTheVote-Project/VoteTrackerPlus/discussions/51#discussioncomment-4772776) to here.
 
 ## Uber Context
 
