@@ -2,7 +2,7 @@
 
 ## Background
 
-Moving the design notes from [VoteTrackerPlus Discussino](https://github.com/TrustTheVote-Project/VoteTrackerPlus/discussions/51#discussioncomment-4772776) to here.
+Moving the design notes from [VoteTrackerPlus Discussion](https://github.com/TrustTheVote-Project/VoteTrackerPlus/discussions/51#discussioncomment-4772776) to here.
 
 ## Uber Context
 
@@ -51,6 +51,8 @@ This part is considered the demo's _design targat_ and not a project plan.  The 
 - VTP backend generates the ballot-store and its GUID and if successful returns the GUID to the web server
 - web server returns the ballot-store GUID to the client
 
+Note - since this is a restful based experience, initially there should be a n minute timeout on the backend to clean up defunct GUIDs.  Maybe sometime later a heartbeat or the equivalent can be implemented.
+
 ### Second API endpoint (occurs during phase 3 above)
 
 - Given a GUID, phone requests a blank ballot from web server
@@ -60,20 +62,16 @@ This part is considered the demo's _design targat_ and not a project plan.  The 
 
 ### Third API endpoint (occurs during phase 3 above)
 
-Given a unique connection ID, this endpoint will upload a ballot.  During the 2023/02/02 meeting, after a detailed 3-way discussion we decided that the JS client would validate the voter's contest ballot choices for proper ballot compliance.  The demo election data file (EDF), which is native VTP election data 'file' so-to-speak, contains the rules that defines a valid selection for each contest.  The NIST standard also defines this but appears (TBD) to not enforce compliance in that NIST allows an election definition file to be incorrectly/incompletely defined by election officials.
+Note - to keep the client side UI implementation simple so to be able to make the necessary milestones, even though the client will get the entire ballot, the client side is _implemented_ at a per contest basis and not really at a per ballot basis.  Specifically, the UI will handle the first contest since by default the backend sends the ballot with the first contest as the default.  Thus:
 
-Though this is not true with native VTP election data files, regardless VTP supports an automatic CI pipeline which includes testing.  The goal is that with tests, human error in election data file definitions regarding valid contest selection will be caught prior to an election.
+- UI displays first contest and handles UI input
+- may submit a selection for the specified contest while also specifying the next contest
+- may solely specify the next contest
+- may quit, removing the GUID from the backend, voiding the VTP voting process
+- may submit the ballot as is without completing all the contests
+  - contests may have undervotes, including no votes
 
-We also decided that the JS client would also support voter self adjudication of all the contests.  Self adjudication occurs when the voter has a chance to validate their contest selections prior to officially submitting their ballot.  Therefor, the JS client at a high level workflow would look like the following after receiving the blank ballot from the server:
-
-- Loop over each contest and:
-    - present the contest to the voter
-    - the voter makes their selection
-    - JS verifies that the selection is VTP EDF compliant
-- Present to the user a final selection summary of the ballot sans ballot verbiage.  This is effectively a pretty print of the ballot CVR via an aggregation of each contest CVR.
-- Require the voter to accept or reject the selection summary
-- If yes, JS will call the third API endpoint
-- If no, JS will either restart the loop or jump to a specific contest for a new voter selection
+Note - as the contests are submitted, the ballot sent to the client from the backend is less and less blank.  This allows the per contest centric UI to know the default next contest as well as being able to revisit a previous completed, partially completed, or skipped contest.  And know when the ballot is complete.
 
 Note that the python server side will re-validate the incoming ballot CVR.  The entrypoint can return various errors to the client:
 
@@ -91,7 +89,8 @@ If there is no error, this endpoint returns:
 - Supports various switches, each switch being a different UX button
 
 Supports calling the backend python script verify-ballot-receipt with various switches. Each different python switch would map (TBD) to a different button.  It is this endpoint which is of high interest regarding the VTP demo as this endpoint basically demonstrates E2EV.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling VoteTracker+ will be for the voter.
-also requires a connection ID
+
+Regardless, the output is basically in console log format with the digests being converted into real links.
 
 ### Fifth API endpoint (occurs during phase 3 above)
 
@@ -99,6 +98,8 @@ also requires a connection ID
 - Supports various switches, each switch being a different UX button
 
 Supports calling the backend python script tally-contests with various switches.  Each different python switch would map (TBD) to a different button.  It is this endpoint which is of high interest to the RCV folks as it is this one where the voter can see how their ranked voted is counted across the rounds of rank choice voting.  As such we probably want to plan some time optimizing the UX experience for this - the better it is, the more compelling RCV should be for the voter.
+
+Regardless, the output is basically in console log format with the digests being converted into real links.
 
 ## Other Odds and Ends
 
