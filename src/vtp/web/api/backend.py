@@ -142,6 +142,7 @@ class VtpBackend:
         operation = AcceptBallotOperation(
             election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
         )
+        # Returns a 2D (ballot check) array, index, and qr_svg tuple
         return operation.run(
             cast_ballot_json=cast_ballot,
             merge_contests=True,
