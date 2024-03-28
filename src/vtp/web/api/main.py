@@ -86,7 +86,7 @@ async def cast_ballot(
         incoming_ballot_data,
     )
     vote_store_ids[vote_store_id] = "cast"
-    return {"ballot-check": ballot_check, "vote-index": row, "qr_svg": qr_svg}
+    return {"ballot_check": ballot_check, "vote_index": row, "qr_svg": qr_svg}
 
 # Endpoint #4
 #
