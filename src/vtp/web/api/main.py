@@ -81,12 +81,12 @@ async def cast_ballot(
     if vote_store_ids[vote_store_id] == "cast":
         return {"error": "This ballot has already been cast"}
 
-    ballot_check, vote_index = VtpBackend.cast_ballot(
+    ballot_check, vote_index, qr_svg = VtpBackend.cast_ballot(
         vote_store_id,
         incoming_ballot_data,
     )
     vote_store_ids[vote_store_id] = "cast"
-    return {"ballot-check": ballot_check, "vote-index": vote_index}
+    return {"ballot_check": ballot_check, "vote_index": row, "qr_svg": qr_svg}
 
 # Endpoint #4
 #
