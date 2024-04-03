@@ -14,6 +14,10 @@ TAGS
 __pycache__
 .pytest_cache
 
+# ignore (for now) the necessay symlinks for co web-api and backend development
+src/vtp/core
+src/vtp/ops
+
 # Ignore python local install build symlinks et al
 .venv
 .tool-versions

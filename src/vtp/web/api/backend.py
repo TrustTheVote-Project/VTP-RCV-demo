@@ -30,10 +30,9 @@ checkedin mock values for the data that the web-api and above layers
 need when running in mock mode.
 """
 
-import csv
 import json
 
-from vtp.core.common import Common
+from vtp.core.webapi import WebAPI
 from vtp.ops.accept_ballot_operation import AcceptBallotOperation
 from vtp.ops.cast_ballot_operation import CastBallotOperation
 from vtp.ops.setup_vtp_demo_operation import SetupVtpDemoOperation
@@ -83,15 +82,16 @@ class VtpBackend:
             # in mock mode there is no guid - make one up
             return VtpBackend._MOCK_GUID
         operation = SetupVtpDemoOperation(
-            election_data_dir=Common.get_generic_ro_edf_dir(),
+            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
         )
         return operation.run(guid_client_store=True)
 
     @staticmethod
-    def get_empty_ballot(vote_store_id: str) -> dict:
+    def get_blank_ballot(vote_store_id: str, voter_address: str = "") -> dict:
         """
-        Endpoint #2: given an existing guid, will return the blank
-        ballot
+        Endpoint #2: will return a blank ballot.  If an address is
+        supplied, will be address specific.  If not, will return the
+        first blank ballot (alphanumerically sorted).
         """
         if VtpBackend._MOCK_MODE:
             # in mock mode there is no guid - make one up
@@ -99,12 +99,14 @@ class VtpBackend:
                 json_doc = json.load(infile)
             #            import pdb; pdb.set_trace()
             return json_doc
-        # Cet a (the) blank ballot from the backend
+        # Get a/the blank ballot from the backend
         operation = CastBallotOperation(
-            election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
         )
+        if voter_address == "":
+            voter_address = VtpBackend._ADDRESS
         return operation.run(
-            an_address = VtpBackend._ADDRESS,
+            an_address=voter_address,
             return_bb=True,
         )
 
@@ -123,11 +125,11 @@ class VtpBackend:
         return json_doc
 
     @staticmethod
-    def mock_get_ballot_check() -> tuple[list, int]:
+    def mock_get_ballot_check() -> tuple[list, int, str]:
         """Mock only - return a static cast ballot"""
         with open(VtpBackend._MOCK_BALLOT_CHECK, "r", encoding="utf8") as infile:
-            csv_doc = list(csv.reader(infile))
-        return csv_doc, VtpBackend._MOCK_VOTER_INDEX
+            json_doc = json.load(infile)
+        return json_doc["ballot_check"], json_doc["ballot_row"], json_doc["qr_svg"]
 
     @staticmethod
     def cast_ballot(vote_store_id: str, cast_ballot: dict) -> dict:
@@ -140,7 +142,7 @@ class VtpBackend:
             return VtpBackend.mock_get_ballot_check()
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = AcceptBallotOperation(
-            election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
         )
         # Returns a 2D (ballot check) array, index, and qr_svg tuple
         return operation.run(
@@ -149,7 +151,7 @@ class VtpBackend:
         )
 
     @staticmethod
-    def verify_ballot_check(
+    def verify_ballot_receipt(
         vote_store_id: str,
         ballot_check: list,
         vote_index: int,
@@ -161,12 +163,14 @@ class VtpBackend:
         """
         if VtpBackend._MOCK_MODE:
             # Just return a mock verify ballot string
-            with open(VtpBackend._MOCK_VERIFY_BALLOT_LOG, "r", encoding="utf8") as infile:
+            with open(
+                VtpBackend._MOCK_VERIFY_BALLOT_LOG, "r", encoding="utf8"
+            ) as infile:
                 json_doc = json.load(infile)
             return json_doc
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = VerifyBallotReceiptOperation(
-            election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
             stdout_printing=False,
         )
         return operation.run(
@@ -186,12 +190,14 @@ class VtpBackend:
         """
         if VtpBackend._MOCK_MODE:
             # Just return a mock tally string
-            with open(VtpBackend._MOCK_TALLY_CONTESTS_LOG, "r", encoding="utf8") as infile:
+            with open(
+                VtpBackend._MOCK_TALLY_CONTESTS_LOG, "r", encoding="utf8"
+            ) as infile:
                 json_doc = json.load(infile)
             return json_doc
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = TallyContestsOperation(
-            election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
             stdout_printing=False,
         )
         if digests == "None":
@@ -213,12 +219,14 @@ class VtpBackend:
         """
         if VtpBackend._MOCK_MODE:
             # Just return a mock contest
-            with open(VtpBackend._MOCK_SHOW_CONTEST_LOG, "r", encoding="utf8") as infile:
+            with open(
+                VtpBackend._MOCK_SHOW_CONTEST_LOG, "r", encoding="utf8"
+            ) as infile:
                 json_doc = json.load(infile)
             return json_doc
         # handle the show_contest
         operation = ShowContestsOperation(
-            election_data_dir=Common.get_guid_based_edf_dir(vote_store_id),
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
             stdout_printing=False,
         )
         return {"contents": operation.run(contest_check=contests)}

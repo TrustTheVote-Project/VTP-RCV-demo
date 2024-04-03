@@ -28,10 +28,11 @@ endif
 .PHONY: default
 default:
 	@echo "${RED}There is no default make target.${END}  Specify one of:"
-	@echo "pylint                  - runs pylint"
-	@echo "pytest                  - runs pytest"
-	@echo "reqs                    - generates a new requirements.txt file"
-	@echo "etags                   - constructs an emacs tags table"
+	@echo "pylint    - runs pylint"
+	@echo "pytest    - runs pytest"
+	@echo "reqs      - generates a new requirements.txt file"
+	@echo "etags     - constructs an emacs tags table"
+	@echo "conjoin   - conjoins the VoteTrackerPlus repo via symlinks"
 	@echo ""
 	@echo "See ${BUILD_DIR}/README.md for more details and info"
 
@@ -42,6 +43,14 @@ pylint:
 	isort ${SRC_DIR} ${TEST_DIR}
 	black ${SRC_DIR} ${TEST_DIR}
 	pylint --recursive y ${SRC_DIR} ${TEST_DIR}
+
+# Connect this repo to the VoteTrackerPlus repo assuming normal layout.
+# This allows this repo to run without a VoteTrackerPlus install proper
+# and to run out of the connected git repo directly.
+.PHONY: conjoin
+conjoin:
+	ln -s ../../../VoteTrackerPlus/src/vtp/core src/vtp/core
+	ln -s ../../../VoteTrackerPlus/src/vtp/ops src/vtp/ops
 
 # Run tests
 .PHONY: pytest
