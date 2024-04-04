@@ -17,6 +17,7 @@ __pycache__
 # ignore (for now) the necessay symlinks for co web-api and backend development
 src/vtp/core
 src/vtp/ops
+src/vtp/web/api/static
 
 # Ignore python local install build symlinks et al
 .venv

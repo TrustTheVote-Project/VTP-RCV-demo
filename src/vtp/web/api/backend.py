@@ -87,7 +87,7 @@ class VtpBackend:
         return operation.run(guid_client_store=True)
 
     @staticmethod
-    def get_blank_ballot(vote_store_id: str, voter_address: str = "") -> dict:
+    def get_blank_ballot(voter_address: str = "") -> dict:
         """
         Endpoint #2: will return a blank ballot.  If an address is
         supplied, will be address specific.  If not, will return the
@@ -101,13 +101,14 @@ class VtpBackend:
             return json_doc
         # Get a/the blank ballot from the backend
         operation = CastBallotOperation(
-            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
+            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
         )
+        # If there is no address, for now use the mock default
         if voter_address == "":
             voter_address = VtpBackend._ADDRESS
         return operation.run(
             an_address=voter_address,
-            return_bb=True,
+            return_blank_ballot=True,
         )
 
     @staticmethod

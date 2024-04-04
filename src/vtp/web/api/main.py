@@ -1,7 +1,11 @@
 """API endpoints for the VoteTrackerPlus backend"""
 
 from backend import VtpBackend
-from fastapi import FastAPI
+from fastapi import FastAPI, status
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
+
+# from starlette.responses import FileResponse
 
 app = FastAPI()
 
@@ -10,6 +14,18 @@ app = FastAPI()
 ########
 # A dict to store VoteStoreIDs
 vote_store_ids = {}
+
+
+# mount a static root for the static pages
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+# handle a root based index.html file
+@app.get("/index.html")
+async def read_index():
+    """Redirect the default index.html page"""
+    # return FileResponse("static/index.html")
+    return RedirectResponse("static/index.html", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @app.get("/web-api")
@@ -27,7 +43,7 @@ async def get_blank_ballot(voter_address: str = "") -> dict:
     """Return an blank ballot for a given VoteStoreID"""
 
     blank_ballot = VtpBackend.get_blank_ballot(voter_address)
-    return {"blank-ballot": blank_ballot}
+    return {"blank_ballot": blank_ballot}
 
 
 # Testing Endpoint - reuse existin (backend) GUIDs
