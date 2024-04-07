@@ -49,7 +49,7 @@ async def get_blank_ballot(voter_address: str = "") -> dict:
 # Testing Endpoint - reuse existin (backend) GUIDs
 # pylint: disable=line-too-long
 # % curl -i -X POST -H 'Content-Type: application/json' http://127.0.0.1:8000/web-api/restore-existing-guids
-@app.post("/web-api/restore-existing-guids")
+@app.post("/web-api/restore_existing_guids")
 async def restore_existing_guids() -> dict:
     """Will restore the existing vote_store_id's"""
     guids = VtpBackend.get_all_guid_workspaces()
@@ -62,7 +62,7 @@ async def restore_existing_guids() -> dict:
 #
 # pylint: disable=line-too-long
 # curl -i -X POST -H 'Content-Type: application/json' -d @docs/cast-ballot.json http://127.0.0.1:8000/web-api/cast-ballot
-@app.post("/web-api/cast-ballot")
+@app.post("/web-api/cast_ballot")
 async def cast_ballot(
     incoming_ballot_data: dict,
 ) -> dict:
@@ -100,8 +100,8 @@ async def cast_ballot(
 #
 # pylint: disable=line-too-long
 # curl -i -X GET -H 'Content-Type: application/json' -d @receipts/receipt.59.json http://127.0.0.1:8000/web-api/verify-ballot-check/d08a278a9a6b82040d505b9aae194efb72cceb0e
-@app.get("/web-api/verify-ballot-check/{vote_store_id}")
-async def verify_ballot_receipt(
+@app.get("/web-api/verify_ballot_check/{vote_store_id}")
+async def verify_ballot_check(
     vote_store_id: str,
     incoming_receipt_data: dict,
 ) -> dict:
@@ -129,7 +129,7 @@ async def verify_ballot_receipt(
 # To manually test #4 do something like:
 # pylint: disable=line-too-long
 # curl -i -X GET -H 'Content-Type: application/json' http://127.0.0.1:8000/web-api/tally-election/d08a278a9a6b82040d505b9aae194efb72cceb0e/0001/8bef5f87658c40bbe7dcda814422a59e844b204d
-@app.get("/web-api/tally-contests/{vote_store_id}/{contests}/{digests}")
+@app.get("/web-api/tally_contests/{vote_store_id}/{contests}/{digests}")
 async def tally_contests(
     vote_store_id: str,
     contests: str,
@@ -157,8 +157,8 @@ async def tally_contests(
 
 
 # Endpoint #6
-@app.get("/web-api/contests/{vote_store_id}/{contest}")
-async def show_contest(
+@app.get("/web-api/show_contest_cvr/{vote_store_id}/{contest}")
+async def show_contest_cvr(
     vote_store_id: str,
     contest: str,
 ) -> dict:
