@@ -91,7 +91,7 @@ async def cast_ballot(
     return {
         "vote_store_id": vote_store_id,
         "ballot_check": ballot_check,
-        "vote_index": vote_index,
+        "ballot_row": vote_index,
         "qr_svg": qr_svg,
     }
 
@@ -100,9 +100,8 @@ async def cast_ballot(
 #
 # pylint: disable=line-too-long
 # curl -i -X GET -H 'Content-Type: application/json' -d @receipts/receipt.59.json http://127.0.0.1:8000/web-api/verify-ballot-check/d08a278a9a6b82040d505b9aae194efb72cceb0e
-@app.get("/web-api/verify_ballot_check/{vote_store_id}")
+@app.get("/web-api/verify_ballot_check/")
 async def verify_ballot_check(
-    vote_store_id: str,
     incoming_receipt_data: dict,
 ) -> dict:
     """
@@ -112,11 +111,7 @@ async def verify_ballot_check(
     # breakpoint()
     ballot_check = incoming_receipt_data["ballot_check"]
     vote_index = incoming_receipt_data["row_index"]
-    if vote_store_id not in vote_store_ids:
-        return {"error": "VoteStoreID not found"}
-
     ballot_check_stdout = VtpBackend.verify_ballot_receipt(
-        vote_store_id,
         ballot_check,
         vote_index,
     )
@@ -129,9 +124,8 @@ async def verify_ballot_check(
 # To manually test #4 do something like:
 # pylint: disable=line-too-long
 # curl -i -X GET -H 'Content-Type: application/json' http://127.0.0.1:8000/web-api/tally-election/d08a278a9a6b82040d505b9aae194efb72cceb0e/0001/8bef5f87658c40bbe7dcda814422a59e844b204d
-@app.get("/web-api/tally_contests/{vote_store_id}/{contests}/{digests}")
+@app.get("/web-api/tally_contests/{contests}/{digests}")
 async def tally_contests(
-    vote_store_id: str,
     contests: str,
     digests: str,
 ) -> dict:
@@ -143,13 +137,8 @@ async def tally_contests(
     separated string with no spaces.  If not specified they should be
     the string "None".  Contest_uid can also be the string "all".
     """
-
     #    breakpoint()
-    if vote_store_id not in vote_store_ids:
-        return {"error": "VoteStoreID not found"}
-
     tally_election_stdout = VtpBackend.tally_election_check(
-        vote_store_id,
         contests,
         digests,
     )
@@ -157,9 +146,8 @@ async def tally_contests(
 
 
 # Endpoint #6
-@app.get("/web-api/show_contest_cvr/{vote_store_id}/{contest}")
+@app.get("/web-api/show_contest_cvr/{contest}")
 async def show_contest_cvr(
-    vote_store_id: str,
     contest: str,
 ) -> dict:
     """
@@ -167,11 +155,7 @@ async def show_contest_cvr(
     commit digest.
     """
     #    breakpoint()
-    if vote_store_id not in vote_store_ids:
-        return {"error": "VoteStoreID not found"}
-
     git_log = VtpBackend.show_contest(
-        vote_store_id,
         contest,
     )
     return {"git_log": git_log}

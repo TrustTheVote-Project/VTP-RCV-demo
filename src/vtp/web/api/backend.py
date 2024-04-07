@@ -153,7 +153,6 @@ class VtpBackend:
 
     @staticmethod
     def verify_ballot_receipt(
-        vote_store_id: str,
         ballot_check: list,
         vote_index: int,
         cvr: bool = False,
@@ -171,7 +170,7 @@ class VtpBackend:
             return json_doc
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = VerifyBallotReceiptOperation(
-            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
+            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
             stdout_printing=False,
         )
         return operation.run(
@@ -182,7 +181,6 @@ class VtpBackend:
 
     @staticmethod
     def tally_election_check(
-        vote_store_id: str,
         contests: str,
         digests: str,
     ) -> str:
@@ -198,7 +196,7 @@ class VtpBackend:
             return json_doc
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = TallyContestsOperation(
-            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
+            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
             stdout_printing=False,
         )
         if digests == "None":
@@ -212,7 +210,6 @@ class VtpBackend:
 
     @staticmethod
     def show_contest(
-        vote_store_id: str,
         contests: str,
     ) -> dict:
         """
@@ -227,7 +224,7 @@ class VtpBackend:
             return json_doc
         # handle the show_contest
         operation = ShowContestsOperation(
-            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
+            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
             stdout_printing=False,
         )
-        return {"contents": operation.run(contest_check=contests)}
+        return operation.run(contest_check=contests)
