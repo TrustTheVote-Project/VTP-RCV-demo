@@ -136,6 +136,8 @@ async def tally_contests(
     The contests and digests fields are optional but must be a comma
     separated string with no spaces.  If not specified they should be
     the string "None".  Contest_uid can also be the string "all".
+
+    Note that the backend returns STDOUT as an array of text lines.
     """
     #    breakpoint()
     tally_election_stdout = VtpBackend.tally_election_check(
@@ -146,16 +148,16 @@ async def tally_contests(
 
 
 # Endpoint #6
-@app.get("/web-api/show_contest_cvr/{contest}")
-async def show_contest_cvr(
+@app.get("/web-api/show_contest/{contest}")
+async def show_contest(
     contest: str,
 ) -> dict:
     """
     Will display the CVR contents, a.k.a. the git log of a specific
-    commit digest.
+    commit digest.  The backend will convert the git log to json
+    so that the client side can render that.
     """
     #    breakpoint()
-    git_log = VtpBackend.show_contest(
-        contest,
-    )
+    git_log = VtpBackend.show_contest(contest)
+    # import pdb; pdb.set_trace()
     return {"git_log": git_log}

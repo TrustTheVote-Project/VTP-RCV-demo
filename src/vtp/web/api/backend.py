@@ -227,4 +227,5 @@ class VtpBackend:
             election_data_dir=WebAPI.get_generic_ro_edf_dir(),
             stdout_printing=False,
         )
+        # Note that ShowContestsOperation.run will return a dictionary
         return operation.run(contest_check=contests)
