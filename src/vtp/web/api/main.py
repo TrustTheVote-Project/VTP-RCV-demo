@@ -124,10 +124,11 @@ async def verify_ballot_row(
 # To manually test #4 do something like:
 # pylint: disable=line-too-long
 # curl -i -X GET -H 'Content-Type: application/json' http://127.0.0.1:8000/web-api/tally-election/d08a278a9a6b82040d505b9aae194efb72cceb0e/0001/8bef5f87658c40bbe7dcda814422a59e844b204d
-@app.get("/web-api/tally_contests/{contests}/{digests}")
+@app.get("/web-api/tally_contests/{contests}/{digests}/{verbosity}")
 async def tally_contests(
     contests: str,
     digests: str,
+    verbosity: str,
 ) -> dict:
     """
     Will execute the tally, optionally limited to a list of contests,
@@ -139,10 +140,10 @@ async def tally_contests(
 
     Note that the backend returns STDOUT as an array of text lines.
     """
-    #    breakpoint()
     tally_contests_stdout = VtpBackend.tally_contests(
         contests,
         digests,
+        verbosity,
     )
     return {"tally_election_stdout": tally_contests_stdout}
 

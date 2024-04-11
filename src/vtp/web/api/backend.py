@@ -33,6 +33,7 @@ need when running in mock mode.
 import json
 
 from vtp.core.webapi import WebAPI
+from vtp.core.common import Globals
 from vtp.ops.accept_ballot_operation import AcceptBallotOperation
 from vtp.ops.cast_ballot_operation import CastBallotOperation
 from vtp.ops.setup_vtp_demo_operation import SetupVtpDemoOperation
@@ -183,6 +184,7 @@ class VtpBackend:
     def tally_contests(
         contests: str,
         digests: str,
+        verbosity: str,
     ) -> str:
         """
         Endpoint #5: will tally an election and print stuff
@@ -194,15 +196,21 @@ class VtpBackend:
             ) as infile:
                 json_doc = json.load(infile)
             return json_doc
+        # Handle args
+        if digests == "None" or digests == "null":
+            digests = ""
+        if contests == "None" or contests == "null":
+            contests = ""
+        if verbosity.isdigit():
+            verbosity = int(verbosity)
+        else:
+            verbosity = Globals.get("DEFAULT_VERBOSITY")
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = TallyContestsOperation(
             election_data_dir=WebAPI.get_generic_ro_edf_dir(),
             stdout_printing=False,
+            verbosity=verbosity,
         )
-        if digests == "None":
-            digests = ""
-        if contests == "None":
-            contests = ""
         return operation.run(
             contest_uid=contests,
             track_contests=digests,
