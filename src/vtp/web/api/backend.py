@@ -152,7 +152,7 @@ class VtpBackend:
         )
 
     @staticmethod
-    def verify_ballot_receipt(
+    def verify_ballot_row(
         ballot_check: list,
         vote_index: int,
         cvr: bool = False,
@@ -180,7 +180,7 @@ class VtpBackend:
         )
 
     @staticmethod
-    def tally_election_check(
+    def tally_contests(
         contests: str,
         digests: str,
     ) -> str:

@@ -100,8 +100,8 @@ async def cast_ballot(
 #
 # pylint: disable=line-too-long
 # curl -i -X GET -H 'Content-Type: application/json' -d @receipts/receipt.59.json http://127.0.0.1:8000/web-api/verify-ballot-check/d08a278a9a6b82040d505b9aae194efb72cceb0e
-@app.get("/web-api/verify_ballot_check/")
-async def verify_ballot_check(
+@app.get("/web-api/verify_ballot_row/")
+async def verify_ballot_row(
     incoming_receipt_data: dict,
 ) -> dict:
     """
@@ -111,11 +111,11 @@ async def verify_ballot_check(
     # breakpoint()
     ballot_check = incoming_receipt_data["ballot_check"]
     vote_index = incoming_receipt_data["row_index"]
-    ballot_check_stdout = VtpBackend.verify_ballot_receipt(
+    ballot_check_stdout = VtpBackend.verify_ballot_row(
         ballot_check,
         vote_index,
     )
-    return {"ballot-check-stdout": ballot_check_stdout}
+    return {"ballot_check_stdout": ballot_check_stdout}
 
 
 # Endpoint #5
@@ -140,11 +140,11 @@ async def tally_contests(
     Note that the backend returns STDOUT as an array of text lines.
     """
     #    breakpoint()
-    tally_election_stdout = VtpBackend.tally_election_check(
+    tally_contests_stdout = VtpBackend.tally_contests(
         contests,
         digests,
     )
-    return {"tally-election-stdout": tally_election_stdout}
+    return {"tally_election_stdout": tally_contests_stdout}
 
 
 # Endpoint #6
