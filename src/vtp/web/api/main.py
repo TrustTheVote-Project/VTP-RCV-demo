@@ -100,16 +100,20 @@ async def cast_ballot(
 #
 # pylint: disable=line-too-long
 # curl -i -X GET -H 'Content-Type: application/json' -d @receipts/receipt.59.json http://127.0.0.1:8000/web-api/verify_ballot_receipt
-@app.get("/web-api/verify_ballot_receipt")
+@app.get("/web-api/verify_ballot_receipt/{vote_store_id}")
 async def verify_ballot_receipt(
+    vote_store_id: str,
     incoming_receipt_data: dict,
 ) -> dict:
     """
     Will verify the ballot-receipt and return STDOUT (that is rendered
     by the client side javascript).
     """
+    if vote_store_id not in vote_store_ids:
+        return {"error": "VoteStoreID not found"}
     # breakpoint()
     ballot_check_stdout = VtpBackend.verify_ballot_receipt(
+        vote_store_id,
         incoming_receipt_data["ballot_check"],
         incoming_receipt_data["row_index"],
     )
@@ -120,8 +124,9 @@ async def verify_ballot_receipt(
 #
 # pylint: disable=line-too-long
 # curl -i -X GET http://127.0.0.1:8000/web-api/verify_ballot_row/$UIDS/$DIGESTS
-@app.get("/web-api/verify_ballot_row/{uids}/{digests}")
+@app.get("/web-api/verify_ballot_row/{vote_store_id}/{uids}/{digests}")
 async def verify_ballot_row(
+    vote_store_id: str,
     uids: str,
     digests: str,
 ) -> dict:
@@ -129,8 +134,16 @@ async def verify_ballot_row(
     Will verify the supllied list of digests.  Note - will not scale
     to large numbers of digests.
     """
+    if vote_store_id not in vote_store_ids:
+        return {"error": "VoteStoreID not found"}
     # breakpoint()
-    return {"verify_ballot_stdout": VtpBackend.verify_ballot_row(uids, digests)}
+    return {
+        "verify_ballot_stdout": VtpBackend.verify_ballot_row(
+            vote_store_id,
+            uids,
+            digests,
+        )
+    }
 
 
 # Endpoint #5
@@ -138,8 +151,9 @@ async def verify_ballot_row(
 # To manually test #4 do something like:
 # pylint: disable=line-too-long
 # curl -i -X GET -H 'Content-Type: application/json' http://127.0.0.1:8000/web-api/tally_contests/d08a278a9a6b82040d505b9aae194efb72cceb0e/0001/8bef5f87658c40bbe7dcda814422a59e844b204d
-@app.get("/web-api/tally_contests/{contests}/{digests}/{verbosity}")
+@app.get("/web-api/tally_contests/{vote_store_id}/{contests}/{digests}/{verbosity}")
 async def tally_contests(
+    vote_store_id: str,
     contests: str,
     digests: str,
     verbosity: str,
@@ -154,7 +168,10 @@ async def tally_contests(
 
     Note that the backend returns STDOUT as an array of text lines.
     """
+    if vote_store_id not in vote_store_ids:
+        return {"error": "VoteStoreID not found"}
     tally_contests_stdout = VtpBackend.tally_contests(
+        vote_store_id,
         contests,
         digests,
         verbosity,
@@ -163,8 +180,9 @@ async def tally_contests(
 
 
 # Endpoint #6
-@app.get("/web-api/show_contest/{contest}")
+@app.get("/web-api/show_contest/{vote_store_id}/{contest}")
 async def show_contest(
+    vote_store_id: str,
     contest: str,
 ) -> dict:
     """
@@ -172,7 +190,9 @@ async def show_contest(
     commit digest.  The backend will convert the git log to json
     so that the client side can render that.
     """
+    if vote_store_id not in vote_store_ids:
+        return {"error": "VoteStoreID not found"}
     #    breakpoint()
-    git_log = VtpBackend.show_contest(contest)
+    git_log = VtpBackend.show_contest(vote_store_id, contest)
     # import pdb; pdb.set_trace()
     return {"git_log": git_log}

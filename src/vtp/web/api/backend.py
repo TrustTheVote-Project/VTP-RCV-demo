@@ -154,6 +154,7 @@ class VtpBackend:
 
     @staticmethod
     def verify_ballot_receipt(
+        vote_store_id: str,
         ballot_check: list,
         vote_index: str,
         cvr: bool = False,
@@ -171,7 +172,7 @@ class VtpBackend:
             return json_doc
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = VerifyBallotReceiptOperation(
-            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
             stdout_printing=False,
         )
         return operation.run(
@@ -182,6 +183,7 @@ class VtpBackend:
 
     @staticmethod
     def verify_ballot_row(
+        vote_store_id: str,
         uids: str,
         digests: str,
     ) -> str:
@@ -198,7 +200,7 @@ class VtpBackend:
             return json_doc
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = VerifyBallotReceiptOperation(
-            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
             stdout_printing=False,
         )
         # the first row is the header line
@@ -208,6 +210,7 @@ class VtpBackend:
 
     @staticmethod
     def tally_contests(
+        vote_store_id: str,
         contests: str,
         digests: str,
         verbosity: str,
@@ -233,7 +236,7 @@ class VtpBackend:
             verbosity = Globals.get("DEFAULT_VERBOSITY")
         # handle the incoming ballot and return the ballot-check and voter-index
         operation = TallyContestsOperation(
-            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
             stdout_printing=False,
             verbosity=verbosity,
         )
@@ -244,6 +247,7 @@ class VtpBackend:
 
     @staticmethod
     def show_contest(
+        vote_store_id: str,
         contests: str,
     ) -> dict:
         """
@@ -258,7 +262,7 @@ class VtpBackend:
             return json_doc
         # handle the show_contest
         operation = ShowContestsOperation(
-            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
             stdout_printing=False,
         )
         # Note that ShowContestsOperation.run will return a dictionary
