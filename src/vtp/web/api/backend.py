@@ -32,8 +32,8 @@ need when running in mock mode.
 
 import json
 
-from vtp.core.webapi import WebAPI
 from vtp.core.common import Globals
+from vtp.core.webapi import WebAPI
 from vtp.ops.accept_ballot_operation import AcceptBallotOperation
 from vtp.ops.cast_ballot_operation import CastBallotOperation
 from vtp.ops.setup_vtp_demo_operation import SetupVtpDemoOperation
@@ -153,13 +153,13 @@ class VtpBackend:
         )
 
     @staticmethod
-    def verify_ballot_row(
+    def verify_ballot_receipt(
         ballot_check: list,
-        vote_index: int,
+        vote_index: str,
         cvr: bool = False,
     ) -> str:
         """
-        Endpoint #4: will verify a ballot-check and vote-inded, returning an
+        Endpoint #4a: will verify a ballot-check and vote-inded, returning an
         undefined string at this time.
         """
         if VtpBackend._MOCK_MODE:
@@ -181,6 +181,32 @@ class VtpBackend:
         )
 
     @staticmethod
+    def verify_ballot_row(
+        uids: str,
+        digests: str,
+    ) -> str:
+        """
+        Endpoint #4b: will verify a ballot-check and vote-inded, returning an
+        undefined string at this time.
+        """
+        if VtpBackend._MOCK_MODE:
+            # Just return a mock verify ballot string
+            with open(
+                VtpBackend._MOCK_VERIFY_DIGESTS_LOG, "r", encoding="utf8"
+            ) as infile:
+                json_doc = json.load(infile)
+            return json_doc
+        # handle the incoming ballot and return the ballot-check and voter-index
+        operation = VerifyBallotReceiptOperation(
+            election_data_dir=WebAPI.get_generic_ro_edf_dir(),
+            stdout_printing=False,
+        )
+        # the first row is the header line
+        return operation.run(
+            receipt_data=[uids.split(","), digests.split(",")], row="1", uids=True
+        )
+
+    @staticmethod
     def tally_contests(
         contests: str,
         digests: str,
@@ -197,9 +223,9 @@ class VtpBackend:
                 json_doc = json.load(infile)
             return json_doc
         # Handle args
-        if digests == "None" or digests == "null":
+        if digests in ("None", "null"):
             digests = ""
-        if contests == "None" or contests == "null":
+        if contests in ("None", "null"):
             contests = ""
         if verbosity.isdigit():
             verbosity = int(verbosity)

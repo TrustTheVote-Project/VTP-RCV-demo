@@ -61,7 +61,7 @@ async def restore_existing_guids() -> dict:
 # Endpoint #3
 #
 # pylint: disable=line-too-long
-# curl -i -X POST -H 'Content-Type: application/json' -d @docs/cast-ballot.json http://127.0.0.1:8000/web-api/cast-ballot
+# curl -i -X POST -H 'Content-Type: application/json' -d @docs/cast-ballot.json http://127.0.0.1:8000/web-api/cast_ballot
 @app.post("/web-api/cast_ballot")
 async def cast_ballot(
     incoming_ballot_data: dict,
@@ -96,12 +96,12 @@ async def cast_ballot(
     }
 
 
-# Endpoint #4
+# Endpoint #4a
 #
 # pylint: disable=line-too-long
-# curl -i -X GET -H 'Content-Type: application/json' -d @receipts/receipt.59.json http://127.0.0.1:8000/web-api/verify-ballot-check/d08a278a9a6b82040d505b9aae194efb72cceb0e
-@app.get("/web-api/verify_ballot_row/")
-async def verify_ballot_row(
+# curl -i -X GET -H 'Content-Type: application/json' -d @receipts/receipt.59.json http://127.0.0.1:8000/web-api/verify_ballot_receipt
+@app.get("/web-api/verify_ballot_receipt")
+async def verify_ballot_receipt(
     incoming_receipt_data: dict,
 ) -> dict:
     """
@@ -109,21 +109,35 @@ async def verify_ballot_row(
     by the client side javascript).
     """
     # breakpoint()
-    ballot_check = incoming_receipt_data["ballot_check"]
-    vote_index = incoming_receipt_data["row_index"]
-    ballot_check_stdout = VtpBackend.verify_ballot_row(
-        ballot_check,
-        vote_index,
+    ballot_check_stdout = VtpBackend.verify_ballot_receipt(
+        incoming_receipt_data["ballot_check"],
+        incoming_receipt_data["row_index"],
     )
-    return {"ballot_check_stdout": ballot_check_stdout}
+    return {"verify_ballot_stdout": ballot_check_stdout}
+
+
+# Endpoint #4b
+#
+# pylint: disable=line-too-long
+# curl -i -X GET http://127.0.0.1:8000/web-api/verify_ballot_row/$UIDS/$DIGESTS
+@app.get("/web-api/verify_ballot_row/{uids}/{digests}")
+async def verify_ballot_row(
+    uids: str,
+    digests: str,
+) -> dict:
+    """
+    Will verify the supllied list of digests.  Note - will not scale
+    to large numbers of digests.
+    """
+    # breakpoint()
+    return {"verify_ballot_stdout": VtpBackend.verify_ballot_row(uids, digests)}
 
 
 # Endpoint #5
-
-
+#
 # To manually test #4 do something like:
 # pylint: disable=line-too-long
-# curl -i -X GET -H 'Content-Type: application/json' http://127.0.0.1:8000/web-api/tally-election/d08a278a9a6b82040d505b9aae194efb72cceb0e/0001/8bef5f87658c40bbe7dcda814422a59e844b204d
+# curl -i -X GET -H 'Content-Type: application/json' http://127.0.0.1:8000/web-api/tally_contests/d08a278a9a6b82040d505b9aae194efb72cceb0e/0001/8bef5f87658c40bbe7dcda814422a59e844b204d
 @app.get("/web-api/tally_contests/{contests}/{digests}/{verbosity}")
 async def tally_contests(
     contests: str,
