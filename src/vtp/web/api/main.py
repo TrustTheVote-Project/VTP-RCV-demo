@@ -83,7 +83,12 @@ async def cast_ballot(
     if vote_store_ids[vote_store_id] == "cast":
         return {"error": "This ballot has already been cast"}
 
-    ballot_check, vote_index, qr_svg = VtpBackend.cast_ballot(
+    # Don't know why pylint is complaining about leftside=4 and
+    # rightside=3 regarding the return tuple - it is 4 and 4
+    # respectively.
+    #
+    # pylint: disable=unbalanced-tuple-unpacking
+    ballot_check, vote_index, qr_svg, receipt_digest = VtpBackend.cast_ballot(
         vote_store_id,
         incoming_ballot_data,
     )
@@ -93,6 +98,7 @@ async def cast_ballot(
         "ballot_check": ballot_check,
         "ballot_row": vote_index,
         "qr_svg": qr_svg,
+        "receipt_digest": receipt_digest,
     }
 
 

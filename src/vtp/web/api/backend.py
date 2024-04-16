@@ -134,7 +134,9 @@ class VtpBackend:
         return json_doc["ballot_check"], json_doc["ballot_row"], json_doc["qr_svg"]
 
     @staticmethod
-    def cast_ballot(vote_store_id: str, cast_ballot: dict) -> dict:
+    def cast_ballot(
+        vote_store_id: str, cast_ballot: dict
+    ) -> tuple[list, int, str, str]:
         """
         Endpoint #3: will cast (upload) a cast ballot and return the
         ballot-check and voter-index
@@ -146,9 +148,14 @@ class VtpBackend:
         operation = AcceptBallotOperation(
             election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
         )
-        # Returns a 2D (ballot check) array, index, and qr_svg tuple
+        # Returns a 2D (ballot check) array, index, a base64 encoded
+        # qr_img, receipt_digest tuple
         return operation.run(
             cast_ballot_json=cast_ballot,
+            # the demo wants to version receipts
+            version_receipts=True,
+            # until there is a backend tabulation server running, merge
+            # the contests in the client's vote_store_id
             merge_contests=True,
         )
 
@@ -266,4 +273,4 @@ class VtpBackend:
             stdout_printing=False,
         )
         # Note that ShowContestsOperation.run will return a dictionary
-        return operation.run(contest_check=contests)
+        return operation.run(contest_check=contests, webapi=True)
