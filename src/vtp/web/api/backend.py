@@ -274,3 +274,27 @@ class VtpBackend:
         )
         # Note that ShowContestsOperation.run will return a dictionary
         return operation.run(contest_check=contests, webapi=True)
+
+    @staticmethod
+    def show_versioned_receipt(
+        vote_store_id: str,
+        digest: str,
+    ) -> dict:
+        """
+        Endpoint #7: display the contents of a vereioned receipt via
+        its digest.
+        """
+        if VtpBackend._MOCK_MODE:
+            # Just return a mock contest
+            with open(
+                VtpBackend._MOCK_SHOW_CONTEST_LOG, "r", encoding="utf8"
+            ) as infile:
+                json_doc = json.load(infile)
+            return json_doc
+        # handle the show_contest
+        operation = ShowContestsOperation(
+            election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
+            stdout_printing=False,
+        )
+        # Note that ShowContestsOperation.run will return a dictionary
+        return operation.run(contest_check=digest, webapi=True, receipt=True)

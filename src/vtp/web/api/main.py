@@ -79,9 +79,9 @@ async def cast_ballot(
     vote_store_ids[vote_store_id] = "uncast"
     # leftover checks from previous implementation
     if vote_store_id not in vote_store_ids:
-        return {"error": "VoteStoreID not found"}
+        return {"webapi_error": "VoteStoreID not found"}
     if vote_store_ids[vote_store_id] == "cast":
-        return {"error": "This ballot has already been cast"}
+        return {"webapi_error": "This ballot has already been cast"}
 
     # Don't know why pylint is complaining about leftside=4 and
     # rightside=3 regarding the return tuple - it is 4 and 4
@@ -97,7 +97,7 @@ async def cast_ballot(
         "vote_store_id": vote_store_id,
         "ballot_check": ballot_check,
         "ballot_row": vote_index,
-        "qr_svg": qr_svg,
+        "encoded_qr": qr_svg,
         "receipt_digest": receipt_digest,
     }
 
@@ -116,7 +116,7 @@ async def verify_ballot_receipt(
     by the client side javascript).
     """
     if vote_store_id not in vote_store_ids:
-        return {"error": "VoteStoreID not found"}
+        return {"webapi_error": "VoteStoreID not found"}
     # breakpoint()
     ballot_check_stdout = VtpBackend.verify_ballot_receipt(
         vote_store_id,
@@ -141,7 +141,7 @@ async def verify_ballot_row(
     to large numbers of digests.
     """
     if vote_store_id not in vote_store_ids:
-        return {"error": "VoteStoreID not found"}
+        return {"webapi_error": "VoteStoreID not found"}
     # breakpoint()
     return {
         "verify_ballot_stdout": VtpBackend.verify_ballot_row(
@@ -175,7 +175,7 @@ async def tally_contests(
     Note that the backend returns STDOUT as an array of text lines.
     """
     if vote_store_id not in vote_store_ids:
-        return {"error": "VoteStoreID not found"}
+        return {"webapi_error": "VoteStoreID not found"}
     tally_contests_stdout = VtpBackend.tally_contests(
         vote_store_id,
         contests,
@@ -197,8 +197,25 @@ async def show_contest(
     so that the client side can render that.
     """
     if vote_store_id not in vote_store_ids:
-        return {"error": "VoteStoreID not found"}
+        return {"webapi_error": "VoteStoreID not found"}
     #    breakpoint()
     git_log = VtpBackend.show_contest(vote_store_id, contest)
     # import pdb; pdb.set_trace()
     return {"git_log": git_log}
+
+
+# Endpoint #7
+@app.get("/web-api/show_versioned_receipt/{vote_store_id}/{digest}")
+async def show_versioned_receipt(
+    vote_store_id: str,
+    digest: str,
+) -> dict:
+    """
+    Will return the contents of the versioned ballot receipt as an
+    array of arrays (similar to cast_ballot above).
+    """
+    if vote_store_id not in vote_store_ids:
+        return {"webapi_error": "VoteStoreID not found"}
+    #    breakpoint()
+    # import pdb; pdb.set_trace()
+    return VtpBackend.show_versioned_receipt(vote_store_id, digest)
