@@ -12,20 +12,18 @@ A FastAPI interface to the VoteTrackerPlus (VTP) backend, to support a live part
 
 This Python project uses [poetry](https://python-poetry.org/) for dependency and package management. To run the code in this repo, first [install poetry](https://python-poetry.org/docs/#installation) on your development workstation. Then,
 
-1. Clone or copy the code to a directory where you keep your GitHub repositories.
-2. Enter the `VTP-web-api` directory you just created, like this: `cd ~/repos/VTP-web-api`
-3. To install the required Python packages, run `poetry install`
-4. To use the new virtual environment you just created, and run the API server & tests (see below for details), run `poetry shell`
+See the [VTP-dev-env](https://github.com/TrustTheVote-Project/VTP-dev-env) for a general overview of VoteTrackerPlus software development.  Clone the VTP-dev-env repo to clone this one.
 
-Note: if you want to use a certain Python version, you can tell poetry, like this:
+See the [VTP development readme](https://github.com/TrustTheVote-Project/VoteTrackerPlus/tree/main/src/vtp) section 4 for one time steps to set up poetry and a python development environment.  Note that this repo and the the VoteTrackerPlus repo have their own and separate python development environments - each repo has their own and separate pyproject.toml file.
+
+With poetry properly installed on your system:
 
 ```bash
-poetry env use 3.9
+$ poetry install
+$ poetry shell
 ```
 
-This command will set up a virtual environment using Python 3.9. Note that the specified Python version must already be installed on your computer.
-
-This project requires Python 3.9 or later.
+This project requires Python 3.10 or later.
 
 ## Run the API server
 
@@ -56,30 +54,16 @@ uvicorn main:app --reload
 
 Here are some examples of the API endpoints you can access when the uvicorn server is running. For the latest list of API endpoints, please review the code in `main.py`.
 
-### Request a Voter ID
+### Manual System Testing of VoteTrackerPlus
 
-To request an empty ballot, the web client first needs to receive a VoteStoreID. This indicates that the VTP backend has created a git repository to store the voter's cast ballot. The VoteStoreID matches the voter with their vote store repository.
+To perform manual end-to-end system testing of VoteTrackerPlus with a specific ElectionData (current default is VTP-mock-election.US.16), the backend needs to be installed on the same server as the uvicorn server:
 
-To request a VoteStoreID, go to this endpoint: `http://127.0.0.1:8000/vote/`
-
-You'll receive a VoteStoreID, like this:
-
-```json
-{"VoteStoreID": "206203"}
+```bash
+# In a different shell so to be able to have a different poetry environment:
+$ cd VoteTrackerPlus
+$ poetry shell
+$ cd ../VTP-mock-election.US.16
+$ setup-vtp-demo
 ```
 
-For the next step, copy the VoteStoreID.
-
-### Request a blank ballot
-
-To request a blank ballot, the client needs to provide a valid VoteStoreID. If you've copied the VoteStoreID from the "/vote/" endpoint, you can request a ballot like this:`http://127.0.0.1:8000/vote/206203`
-
-If you provide an ID that doesn't match an existing ID, you'll get an error message back, but if you provide a valid ID, you'll get an empty ballot back from the server in JSON format.
-
-## Testing
-
-If you'd rather not test the API by hand, you can use pytest. Note that you still need an active `poetry shell` environment.
-
-1. Go to the root of the repo, like this: `cd ~/repos/VTP-web-api` -- of course, your path may vary!
-2. Run `pytest`
-3. To see a table of code coverage, run `pytest --cov-report term-missing --cov=src/`
+With the uvicorn server running and with a local installion of a VoteTrackerPlus election, which is nominally installed in /opt/VoteTrackerPlus/demo.01 by default, one should be able to connect to the index.html page of the uvicorn server and vote, get a ballot receipt, verify the receipt, inspect contest CVRs, and tally contests.

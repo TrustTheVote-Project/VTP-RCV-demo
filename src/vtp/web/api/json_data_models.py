@@ -2,7 +2,7 @@
 Pydantic Models for the blank and cast ballots, the ballot check, and
 the voter's index.  It is probably the case that there is not enough
 time to create models for endpoints 4 and 5 as that data is currently
-in more or less system log sytax.
+in more or less system log syntax.
 """
 
 from typing import Dict, List, Union
