@@ -13,6 +13,7 @@
 DOC_DIR     := docs
 SRC_DIR     := src/vtp/web/api
 TEST_DIR    := tests
+BUILD_FILES := pyproject.toml poetry.lock
 
 # for uvicorn console logging: [critical|error|warning|info|debug|trace]
 VERBOSITY   :=
@@ -37,12 +38,14 @@ endif
 .PHONY: default
 default:
 	@echo "${RED}There is no default make target.${END}  Specify one of:"
-	@echo "pylint    - runs pylint"
-	@echo "pytest    - runs pytest"
-	@echo "reqs      - generates a new requirements.txt file"
-	@echo "etags     - constructs an emacs tags table"
-	@echo "conjoin   - conjoins the VoteTrackerPlus repos via symlinks"
-	@echo "run       - will run the uvicorn web-api server (main:app)"
+	@echo "pylint       	  - runs pylint"
+	@echo "pytest       	  - runs pytest"
+	@echo "poetry-build 	  - performs a poetry local install"
+	@echo "poetry-list-latest - will show which poetry packages have updates"
+	@echo "requirements.txt   - updates the python requirements file"
+	@echo "etags        	  - constructs an emacs tags table"
+	@echo "conjoin      	  - conjoins the VoteTrackerPlus repos via symlinks"
+	@echo "run          	  - will run the uvicorn web-api server (main:app)"
 	@echo ""
 	@echo "See ${BUILD_DIR}/README.md for more details and info"
 
@@ -53,6 +56,15 @@ pylint:
 	isort ${SRC_DIR} ${TEST_DIR}
 	black ${SRC_DIR} ${TEST_DIR}
 	pylint --recursive y ${SRC_DIR} ${TEST_DIR}
+
+.PHONY: poetry-build poetry-list-latest
+poetry-build:
+	poetry shell && poetry install
+poetry-list-latest:
+	poetry show -o
+# Generate a requirements.txt for dependabot (ignoring the symlinks)
+requirements.txt: ${BUILD_FILES}
+	poetry export --with dev -f requirements.txt --output requirements.txt
 
 .PHONY: run
 run:
@@ -77,8 +89,3 @@ ETAG_SRCS := $(shell find * -type f -name '*.py' -o -name '*.md' | grep -v defun
 .PHONY: etags
 etags: ${ETAG_SRCS}
 	etags ${ETAG_SRCS}
-
-# Generate a requirements.txt for dependabot (ignoring the symlinks)
-.PHONY: reqs
-reqs requirements.txt: pyproject.toml poetry.lock
-	poetry export --with dev -f requirements.txt --output requirements.txt
