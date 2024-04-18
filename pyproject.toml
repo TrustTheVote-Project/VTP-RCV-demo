@@ -8,19 +8,19 @@ readme = "README.md"
 packages = [{include = "vtp", from = "src"}]
 
 [tool.poetry.dependencies]
+deepdiff = "^7.0.1"
 fastapi = "^0.110.0"
 httpx = "^0.27.0"
 importlib-resources = "^6.4.0"
-python = "^3.10"
-uvicorn = "^0.29.0"
-qrcode = "^7.4.2"
-deepdiff = "^6.7.1"
-networkx = "^3.2.1"
-pyaml = "^23.12.0"
+networkx = "^3.3"
+pyaml = "^24.4.0"
 pyinputplus = "^0.2.12"
+python = "^3.10"
+qrcode = "^7.4.2"
+uvicorn = "^0.29.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.3.0"
+black = "^24.4.0"
 flake8 = "^7.0.0"
 isort = "^5.13.0"
 mypy = "^1.9.0"
