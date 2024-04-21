@@ -14,6 +14,8 @@ DOC_DIR     := docs
 SRC_DIR     := src/vtp/web/api
 TEST_DIR    := tests
 BUILD_FILES := pyproject.toml poetry.lock
+HOST        := 127.0.0.1
+PORT        := 8000
 
 # for uvicorn console logging: [critical|error|warning|info|debug|trace]
 VERBOSITY   :=
@@ -38,14 +40,19 @@ endif
 .PHONY: default
 default:
 	@echo "${RED}There is no default make target.${END}  Specify one of:"
-	@echo "pylint       	  - runs pylint"
-	@echo "pytest       	  - runs pytest"
+	@echo "pylint             - runs pylint"
+	@echo "pytest             - runs pytest"
 	@echo "poetry-build 	  - performs a poetry local install"
 	@echo "poetry-list-latest - will show which poetry packages have updates"
 	@echo "requirements.txt   - updates the python requirements file"
-	@echo "etags        	  - constructs an emacs tags table"
-	@echo "conjoin      	  - conjoins the VoteTrackerPlus repos via symlinks"
-	@echo "run          	  - will run the uvicorn web-api server (main:app)"
+	@echo "etags              - constructs an emacs tags table"
+	@echo "conjoin            - conjoins the VoteTrackerPlus repos via"
+	@echo "                     symlinks"
+	@echo "run - will run the uvicorn web-api server (main:app) with"
+	@echo "      host='${HOST}' for localhost operation only.  Set"
+	@echo "      HOST=0.0.0.0 for LAN operation - ${RED}REQUIRES A FIREWALL${END}"
+	@echo "      ${RED}FOR SECURITY${END}.  See https://www.uvicorn.org/settings"
+	@echo "      for more info."
 	@echo ""
 	@echo "See ${BUILD_DIR}/README.md for more details and info"
 
@@ -68,7 +75,7 @@ requirements.txt: ${BUILD_FILES}
 
 .PHONY: run
 run:
-	cd src/vtp/web/api && uvicorn main:app ${LOG_LEVEL} --reload-dir ../../../../../VTP-web-client/static --reload-dir . --reload-include "*.py" --reload-include "*.js"
+	cd src/vtp/web/api && uvicorn main:app --host ${HOST} --port ${PORT} ${LOG_LEVEL} --reload-dir ../../../../../VTP-web-client/static --reload-dir . --reload-include "*.py" --reload-include "*.js"
 
 # Connect this repo to the VoteTrackerPlus repo assuming normal layout.
 # This allows this repo to run without a VoteTrackerPlus install proper
