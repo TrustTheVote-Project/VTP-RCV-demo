@@ -31,6 +31,7 @@ need when running in mock mode.
 """
 
 import json
+import os
 
 from vtp.core.common import Globals
 from vtp.core.webapi import WebAPI
@@ -148,6 +149,9 @@ class VtpBackend:
         operation = AcceptBallotOperation(
             election_data_dir=WebAPI.get_guid_based_edf_dir(vote_store_id),
         )
+        # When testing in sequential cast-ballot mode, maybe merge each ballot
+        # as cast
+        merge_p = True if os.getenv("MERGE_CONTESTS") else False
         # Returns a 2D (ballot check) array, index, a base64 encoded
         # qr_img, receipt_digest tuple
         return operation.run(
@@ -156,7 +160,7 @@ class VtpBackend:
             version_receipts=True,
             # until there is a backend tabulation server running, merge
             # the contests in the client's vote_store_id
-            merge_contests=True,
+            merge_contests=merge_p,
         )
 
     @staticmethod

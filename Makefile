@@ -19,6 +19,9 @@ PORT        := 8000
 
 # for uvicorn console logging: [critical|error|warning|info|debug|trace]
 VERBOSITY   :=
+# when set to non nil, will merge the ballots as they are cast, but this
+# ONLY works when sequentially casting ballots in demo/test mode
+MERGE_CONTESTS :=
 
 # Use colors for errors and warnings when in an interactive terminal
 INTERACTIVE := $(shell test -t 0 && echo 1)
@@ -75,7 +78,7 @@ requirements.txt: ${BUILD_FILES}
 
 .PHONY: run
 run:
-	cd src/vtp/web/api && uvicorn main:app --host ${HOST} --port ${PORT} ${LOG_LEVEL} --reload-dir ../../../../../VTP-web-client/static --reload-dir . --reload-include "*.py" --reload-include "*.js"
+	cd src/vtp/web/api && MERGE_CONTESTS=${MERGE_CONTESTS}  uvicorn main:app --host ${HOST} --port ${PORT} ${LOG_LEVEL} --reload-dir ../../../../../VTP-web-client/static --reload-dir . --reload-include "*.py" --reload-include "*.js"
 
 # Connect this repo to the VoteTrackerPlus repo assuming normal layout.
 # This allows this repo to run without a VoteTrackerPlus install proper
