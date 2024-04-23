@@ -151,7 +151,7 @@ class VtpBackend:
         )
         # When testing in sequential cast-ballot mode, maybe merge each ballot
         # as cast
-        merge_p = True if os.getenv("MERGE_CONTESTS") else False
+        merge_p = bool(os.getenv("MERGE_CONTESTS"))
         # Returns a 2D (ballot check) array, index, a base64 encoded
         # qr_img, receipt_digest tuple
         return operation.run(

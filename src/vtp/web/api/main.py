@@ -20,7 +20,15 @@ vote_store_ids = {}
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-# handle a root based index.html file
+# redirect root to the index page
+@app.get("/")
+async def root():
+    """Redirect the default index.html page"""
+    # return FileResponse("static/index.html")
+    return RedirectResponse("static/index.html", status_code=status.HTTP_303_SEE_OTHER)
+
+
+# redirect a root index.html reference as well
 @app.get("/index.html")
 async def read_index():
     """Redirect the default index.html page"""
@@ -28,8 +36,9 @@ async def read_index():
     return RedirectResponse("static/index.html", status_code=status.HTTP_303_SEE_OTHER)
 
 
-@app.get("/web-api")
-async def root() -> dict:
+# a version/test endpoint
+@app.get("/web-api/version")
+async def webapi_version() -> dict:
     """Demonstrate that API is working"""
     return {"version": "0.1.0"}
 
