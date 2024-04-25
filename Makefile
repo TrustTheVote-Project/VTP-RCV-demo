@@ -40,8 +40,8 @@ else
 endif
 
 # Let there be no default target
-.PHONY: default
-default:
+.PHONY: help
+help:
 	@echo "${RED}There is no default make target.${END}  Specify one of:"
 	@echo "pylint             - runs pylint"
 	@echo "pytest             - runs pytest"
