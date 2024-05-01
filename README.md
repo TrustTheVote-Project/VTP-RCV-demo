@@ -4,8 +4,14 @@ A FastAPI interface to the VoteTrackerPlus (VTP) backend, to support a live part
 
 ## Useful Links
 
+The general layout and relationship of the various VTP repos is described in the [VTP-dev-env](https://github.com/TrustTheVote-Project/VTP-dev-env) repository - see the README there first.
+
+See the [VoteTrackerPlus](https://github.com/TrustTheVote-Project/VoteTrackerPlus) repository for general VTP design and project information - that repo is the primary VTP repo.
+
+See the [developer readme](https://github.com/TrustTheVote-Project/VoteTrackerPlus/tree/main/src/vtp) in the VoteTrackerPlus repo for even more details.
+
 - For an overview of the demo project, check out [the project mind map](https://www.mindmeister.com/map/2534840002?t=2nMk3h9Uha).
-- This repo also includes the official [Design Notes](docs/DesignNotes.md).
+- This repo also includes web-api [Design Notes](docs/DesignNotes.md).
 - The API endpoints in this project are a web interface to the [VoteTrackerPlus backend](https://github.com/TrustTheVote-Project/VoteTrackerPlus).
 
 ## Installation
@@ -27,10 +33,17 @@ This project requires Python 3.10 or later.
 
 ## Run the API server
 
-1. Once the installation is complete, go to the source code directory: `cd src/vtp/web/api`
-2. Run the `uvicorn` server like this: `uvicorn main:app`
+Once the installation is complete, the top level Makefile wraps starting the uvicorn server.  Note that nominally the python backend needs to be instantiated.  The backend tabulation server does not need to be running for the web-api to fully function.
 
-If the poetry shell is active (see **Installation** above for details), you should see some output that looks like this:
+The below assumes that the VTP-dev-env has been cloned and used to create this repo.
+
+```bash
+$ make help
+$ make conjoin
+$ make run
+```
+
+If the poetry shell is active, you should see some output that looks like this:
 
 ```bash
 ➤ uvicorn main:app
@@ -40,30 +53,10 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
 
-To test the API endpoints using the uvicorn server, go to the URL specified in your favorite browser. You'll see the version information for this API server.
-
-Note that you can specify the IP address and port number you want the uvicorn server to use, but we're going to use the defaults here (<http://127.0.0.1:8000>).
-
-If you want to update the code that controls the API endpoints, and see the changes on the uvicorn server as soon as you save your code, add the `--reload` switch, like this:
-
-```bash
-uvicorn main:app --reload
-```
-
 ## Testing the API endpoints in your browser
 
-Here are some examples of the API endpoints you can access when the uvicorn server is running. For the latest list of API endpoints, please review the code in `main.py`.
+To test the API endpoints using the uvicorn server, go to the URL specified in the above output in your favorite browser. You'll see the version information for this API server.
 
-### Manual System Testing of VoteTrackerPlus
-
-To perform manual end-to-end system testing of VoteTrackerPlus with a specific ElectionData (current default is VTP-mock-election.US.16), the backend needs to be installed on the same server as the uvicorn server:
-
-```bash
-# In a different shell so to be able to have a different poetry environment:
-$ cd VoteTrackerPlus
-$ poetry shell
-$ cd ../VTP-mock-election.US.16
-$ setup-vtp-demo
-```
+To include the python backend, in another terminal window configure the VoteTrackerPlus repo and perform a local installation of the ElectionData repo.  See the [README](https://github.com/TrustTheVote-Project/VoteTrackerPlus) for more info.
 
 With the uvicorn server running and with a local installion of a VoteTrackerPlus election, which is nominally installed in /opt/VoteTrackerPlus/demo.01 by default, one should be able to connect to the index.html page of the uvicorn server and vote, get a ballot receipt, verify the receipt, inspect contest CVRs, and tally contests.
